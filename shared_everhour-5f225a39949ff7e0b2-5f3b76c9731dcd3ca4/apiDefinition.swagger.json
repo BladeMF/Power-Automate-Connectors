@@ -1,0 +1,379 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Everhour",
+    "description": "",
+    "version": "1.0"
+  },
+  "host": "api.everhour.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/projects": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Project"
+              }
+            }
+          }
+        },
+        "summary": "Get projects",
+        "description": "Gets the project list",
+        "operationId": "GetProjects",
+        "parameters": [
+          {
+            "$ref": "#/parameters/Content-type"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "as",
+              "ev",
+              "b3",
+              "b2",
+              "pv",
+              "gh",
+              "in",
+              "tr",
+              "jr"
+            ]
+          }
+        ]
+      }
+    },
+    "/hooks": {
+      "x-ms-notification-content": {
+        "description": "Default response",
+        "schema": {}
+      },
+      "post": {
+        "responses": {
+          "201": {
+            "description": "Default"
+          }
+        },
+        "summary": "Triggers",
+        "operationId": "Trigger",
+        "x-ms-trigger": "single",
+        "parameters": [
+          {
+            "$ref": "#/parameters/Content-type"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "targetUrl": {
+                  "type": "string",
+                  "description": "targetUrl",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": ""
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "events"
+                },
+                "project": {
+                  "type": "string",
+                  "description": "project"
+                }
+              },
+              "required": [
+                "targetUrl"
+              ]
+            }
+          }
+        ],
+        "description": "Any trigger"
+      }
+    },
+    "/hooks/{hook_id}": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {}
+          }
+        },
+        "summary": "Delete a Webhook",
+        "description": "Deletes a webhook given an id",
+        "operationId": "DeleteWebhook",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "$ref": "#/parameters/Content-type"
+          },
+          {
+            "name": "hook_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "X-My-Header",
+            "in": "header",
+            "type": "string",
+            "default": "My value"
+          }
+        ]
+      },
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/Hook"
+            }
+          }
+        },
+        "summary": "Get webhook",
+        "description": "Gets a webhook by id",
+        "operationId": "GetWebhook",
+        "parameters": [
+          {
+            "$ref": "#/parameters/Content-type"
+          },
+          {
+            "name": "hook_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Hook": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "id"
+        },
+        "targetUrl": {
+          "type": "string",
+          "description": "targetUrl"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "events"
+        },
+        "project": {
+          "type": "string",
+          "description": "project"
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "isActive"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "createdAt"
+        },
+        "lastUsedAt": {
+          "type": "string",
+          "description": "lastUsedAt"
+        }
+      }
+    },
+    "Project": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "id"
+        },
+        "name": {
+          "type": "string",
+          "description": "name"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "workspaceId"
+        },
+        "workspaceName": {
+          "type": "string",
+          "description": "workspaceName"
+        },
+        "client": {
+          "type": "integer",
+          "format": "int32",
+          "description": "client"
+        },
+        "type": {
+          "type": "string",
+          "description": "type"
+        },
+        "favorite": {
+          "type": "boolean",
+          "description": "favorite"
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "users"
+        },
+        "billing": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "type"
+            },
+            "fee": {
+              "type": "integer",
+              "format": "int32",
+              "description": "fee"
+            }
+          },
+          "description": "billing"
+        },
+        "rate": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "type"
+            },
+            "rate": {
+              "type": "integer",
+              "format": "int32",
+              "description": "rate"
+            },
+            "userRateOverrides": {
+              "type": "object",
+              "properties": {},
+              "description": "userRateOverrides"
+            },
+            "userCostOverrides": {
+              "type": "object",
+              "properties": {},
+              "description": "userCostOverrides"
+            }
+          },
+          "description": "rate"
+        },
+        "budget": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "type"
+            },
+            "budget": {
+              "type": "integer",
+              "format": "int32",
+              "description": "budget"
+            },
+            "progress": {
+              "type": "integer",
+              "format": "int32",
+              "description": "progress"
+            },
+            "timeProgress": {
+              "type": "integer",
+              "format": "int32",
+              "description": "timeProgress"
+            },
+            "expenseProgress": {
+              "type": "integer",
+              "format": "int32",
+              "description": "expenseProgress"
+            },
+            "period": {
+              "type": "string",
+              "description": "period"
+            },
+            "appliedFrom": {
+              "type": "string",
+              "description": "appliedFrom"
+            },
+            "disallowOverbudget": {
+              "type": "boolean",
+              "description": "disallowOverbudget"
+            },
+            "excludeUnbillableTime": {
+              "type": "boolean",
+              "description": "excludeUnbillableTime"
+            },
+            "excludeExpenses": {
+              "type": "boolean",
+              "description": "excludeExpenses"
+            },
+            "showToUsers": {
+              "type": "boolean",
+              "description": "showToUsers"
+            },
+            "threshold": {
+              "type": "integer",
+              "format": "int32",
+              "description": "threshold"
+            }
+          },
+          "description": "budget"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "Content-type": {
+      "name": "Content-type",
+      "in": "header",
+      "type": "string",
+      "default": "application/json"
+    }
+  },
+  "responses": {},
+  "securityDefinitions": {
+    "API Key": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-Api-Key"
+    }
+  },
+  "security": [
+    {
+      "API Key": []
+    }
+  ],
+  "tags": []
+}

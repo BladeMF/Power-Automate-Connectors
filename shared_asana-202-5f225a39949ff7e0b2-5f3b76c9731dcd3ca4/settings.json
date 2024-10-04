@@ -1,0 +1,9 @@
+{
+  "connectorId": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+  "environment": "Default-21c205cc-335d-4b0f-b444-ff527de57ab6",
+  "apiProperties": "apiProperties.json",
+  "apiDefinition": "apiDefinition.swagger.json",
+  "icon": "icon.png",
+  "powerAppsUrl": "https://api.powerapps.com",
+  "powerAppsApiVersion": "2016-11-01"
+}

@@ -1,0 +1,666 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Basecamp 4",
+    "description": "",
+    "version": "1.0"
+  },
+  "host": "3.basecampapi.com",
+  "basePath": "/5848514",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "parameters": {},
+  "paths": {
+    "/projects.json": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Project"
+              }
+            }
+          }
+        },
+        "summary": "Get projects",
+        "operationId": "GetProjects",
+        "description": "Returns a list of all the projects",
+        "x-ms-visibility": "important",
+        "parameters": []
+      }
+    },
+    "/buckets/{projectId}/card_tables/lists/{columnId}/cards.json": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Create a card",
+        "description": "Creates a card in a table",
+        "operationId": "CreateCard",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "projectId",
+            "description": "The project id",
+            "format": "integer",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "x-ms-summary": "Project ID",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "GetProjects",
+              "value-path": "id",
+              "value-title": "name"
+            }
+          },
+          {
+            "name": "columnId",
+            "description": "The column id",
+            "format": "integer",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "x-ms-summary": "Column ID",
+            "x-ms-visibility": "important"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "The title of the card",
+                  "title": "Title",
+                  "x-ms-visibility": "important"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "containing information about the card.",
+                  "title": "Content",
+                  "x-ms-visibility": "important"
+                },
+                "due_on": {
+                  "type": "string",
+                  "description": "due date (ISO 8601) of the card",
+                  "title": "Due on",
+                  "format": "date"
+                },
+                "notify": {
+                  "type": "boolean",
+                  "description": "whether to notify assignees, value true or false. Defaults to false.",
+                  "title": "Notify",
+                  "format": "bool",
+                  "x-ms-visibility": "important"
+                }
+              },
+              "x-ms-visibility": "important",
+              "required": [
+                "title"
+              ]
+            },
+            "x-ms-visibility": "important"
+          }
+        ]
+      }
+    },
+    "/buckets/{projectId}/todolists/{listId}/todos.json": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Create a To-do",
+        "operationId": "CreateToDo",
+        "x-ms-visibility": "important",
+        "description": "Creates a To-Do",
+        "parameters": [
+          {
+            "name": "projectId",
+            "description": "The project id",
+            "format": "integer",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "x-ms-summary": "Project ID",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "GetProjects",
+              "value-path": "id",
+              "value-title": "name"
+            }
+          },
+          {
+            "name": "listId",
+            "description": "The list id",
+            "format": "integer",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "x-ms-summary": "List ID",
+            "x-ms-visibility": "important"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "description": "for what the to-do is for.",
+                  "title": "Content",
+                  "x-ms-visibility": "important"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "containing information about the to-do. See our Rich text guide for what HTML tags allowed.",
+                  "title": "Description",
+                  "x-ms-visibility": "important"
+                },
+                "assignee_ids": {
+                  "type": "array",
+                  "description": "an array of people that will be assigned to this to-do. Please see the Get people endpoints to retrieve them.",
+                  "title": "Assignee ids",
+                  "x-ms-visibility": "important",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "completion_subscriber_ids": {
+                  "type": "array",
+                  "description": "an array of people that will be notified on to-do completion. Please see the Get people endpoints to retrieve them.",
+                  "title": "Completion subscriber ids",
+                  "x-ms-visibility": "important",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "due_on": {
+                  "type": "string",
+                  "description": "due date (ISO 8601) of the card",
+                  "title": "Due on",
+                  "format": "date"
+                },
+                "notify": {
+                  "type": "boolean",
+                  "description": "whether to notify assignees, value true or false. Defaults to false.",
+                  "title": "Notify",
+                  "format": "bool",
+                  "x-ms-visibility": "important"
+                },
+                "starts_on": {
+                  "type": "string",
+                  "description": "allows the to-do to run from this date to the due_on date.",
+                  "title": "Starts on",
+                  "format": "date"
+                }
+              },
+              "x-ms-visibility": "important",
+              "required": [
+                "content"
+              ]
+            },
+            "x-ms-visibility": "important"
+          }
+        ]
+      }
+    },
+    "/buckets/{projectId}/webhooks.json": {
+      "x-ms-notification-content": {
+        "description": "Default response",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int32",
+              "description": "id"
+            },
+            "kind": {
+              "type": "string",
+              "description": "kind"
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "copy_id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "copy_id"
+                }
+              },
+              "description": "details"
+            },
+            "created_at": {
+              "type": "string",
+              "description": "created_at"
+            },
+            "copy": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "url"
+                },
+                "app_url": {
+                  "type": "string",
+                  "description": "app_url"
+                },
+                "bucket": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "id"
+                    }
+                  },
+                  "description": "bucket"
+                }
+              },
+              "description": "copy"
+            },
+            "recording": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                }
+              },
+              "description": "recording"
+            },
+            "creator": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                },
+                "attachable_sgid": {
+                  "type": "string",
+                  "description": "attachable_sgid"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "name"
+                },
+                "email_address": {
+                  "type": "string",
+                  "description": "email_address"
+                },
+                "personable_type": {
+                  "type": "string",
+                  "description": "personable_type"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "title"
+                },
+                "bio": {
+                  "type": "string",
+                  "description": "bio"
+                },
+                "created_at": {
+                  "type": "string",
+                  "description": "created_at"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "description": "updated_at"
+                },
+                "admin": {
+                  "type": "boolean",
+                  "description": "admin"
+                },
+                "owner": {
+                  "type": "boolean",
+                  "description": "owner"
+                },
+                "time_zone": {
+                  "type": "string",
+                  "description": "time_zone"
+                },
+                "avatar_url": {
+                  "type": "string",
+                  "description": "avatar_url"
+                },
+                "company": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "id"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "name"
+                    }
+                  },
+                  "description": "company"
+                }
+              },
+              "description": "creator"
+            }
+          }
+        }
+      },
+      "post": {
+        "responses": {
+          "201": {
+            "description": "OK"
+          }
+        },
+        "x-ms-trigger": "single",
+        "summary": "Webhook",
+        "description": "Webhook",
+        "operationId": "Webhook",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "GetProjects",
+              "value-path": "id",
+              "value-title": "name"
+            }
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "payload_url": {
+                  "type": "string",
+                  "description": "payload_url",
+                  "x-ms-notification-url": true,
+                  "x-ms-visibility": "internal",
+                  "title": ""
+                },
+                "types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "title": "Type",
+                    "enum": [
+                      "Comment",
+                      "Client::Approval::Response",
+                      "Client::Forward",
+                      "Client::Reply",
+                      "CloudFile",
+                      "Document",
+                      "GoogleDocument",
+                      "Inbox::Forward",
+                      "Message",
+                      "Question",
+                      "Question::Answer",
+                      "Schedule::Entry",
+                      "Todo",
+                      "Todolist",
+                      "Upload",
+                      "Vault"
+                    ]
+                  },
+                  "description": "types"
+                }
+              },
+              "required": [
+                "types",
+                "payload_url"
+              ],
+              "x-ms-visibility": "important"
+            },
+            "x-ms-visibility": "important"
+          }
+        ]
+      }
+    },
+    "/buckets/{projectId}/webhooks/{webhookId}.json": {
+      "delete": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Delete a Webhook",
+        "description": "Delete a Webhook",
+        "operationId": "DeleteWebhook",
+        "x-ms-visibility": "advanced",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "GetProjects",
+              "value-path": "id",
+              "value-title": "name"
+            }
+          },
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Tool": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "id"
+        },
+        "title": {
+          "type": "string",
+          "description": "title"
+        },
+        "name": {
+          "type": "string",
+          "description": "name"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "enabled"
+        },
+        "position": {
+          "type": "string",
+          "description": "position"
+        },
+        "url": {
+          "type": "string",
+          "description": "url"
+        },
+        "app_url": {
+          "type": "string",
+          "description": "app_url"
+        }
+      }
+    },
+    "ClientCompany": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "id"
+        },
+        "name": {
+          "type": "string",
+          "description": "name"
+        }
+      },
+      "description": "client_company"
+    },
+    "Webhook": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "id"
+        },
+        "active": {
+          "type": "string",
+          "description": "active"
+        },
+        "created_at": {
+          "type": "string",
+          "description": "created_at"
+        },
+        "updated_at": {
+          "type": "string",
+          "description": "updated_at"
+        },
+        "payload_url": {
+          "type": "string",
+          "description": "payload_url"
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "types"
+        },
+        "url": {
+          "type": "string",
+          "description": "url"
+        },
+        "app_url": {
+          "type": "string",
+          "description": "app_url"
+        }
+      }
+    },
+    "Project": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "description": "id"
+        },
+        "status": {
+          "type": "string",
+          "description": "status"
+        },
+        "created_at": {
+          "type": "string",
+          "description": "created_at"
+        },
+        "updated_at": {
+          "type": "string",
+          "description": "updated_at"
+        },
+        "name": {
+          "type": "string",
+          "description": "name"
+        },
+        "description": {
+          "type": "string",
+          "description": "description"
+        },
+        "purpose": {
+          "type": "string",
+          "description": "purpose"
+        },
+        "clients_enabled": {
+          "type": "boolean",
+          "description": "clients_enabled"
+        },
+        "bookmark_url": {
+          "type": "string",
+          "description": "bookmark_url"
+        },
+        "url": {
+          "type": "string",
+          "description": "url"
+        },
+        "app_url": {
+          "type": "string",
+          "description": "app_url"
+        },
+        "dock": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tool"
+          },
+          "description": "dock"
+        },
+        "bookmarked": {
+          "type": "boolean",
+          "description": "bookmarked"
+        },
+        "client_company": {
+          "$ref": "#/definitions/ClientCompany"
+        },
+        "clientside": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "url"
+            },
+            "app_url": {
+              "type": "string",
+              "description": "app_url"
+            }
+          },
+          "description": "clientside"
+        }
+      }
+    }
+  },
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://launchpad.37signals.com/authorization/new",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
+      "scopes": {}
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": []
+    }
+  ],
+  "tags": []
+}

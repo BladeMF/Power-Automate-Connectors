@@ -1,0 +1,24 @@
+{
+  "properties": {
+    "connectionParameters": {
+      "token": {
+        "type": "oauthSetting",
+        "oAuthSettings": {
+          "identityProvider": "basecamp",
+          "clientId": "55e6cc852704a113c681f5bc35e164419958b507",
+          "scopes": [],
+          "redirectMode": "GlobalPerConnector",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect/basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+          "properties": {
+            "IsFirstParty": "False",
+            "IsOnbehalfofLoginSupported": false
+          },
+          "customParameters": {}
+        }
+      }
+    },
+    "iconBrandColor": "#fae34c",
+    "capabilities": [],
+    "publisher": "Vladislav Kosev"
+  }
+}
