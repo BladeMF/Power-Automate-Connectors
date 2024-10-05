@@ -30,6 +30,31 @@
       }
     },
     "iconBrandColor": "#ffffff",
+    "policyTemplateInstances": [
+      {
+        "parameters": {
+          "x-ms-apimTemplate-operationName": [
+            "GetTasks"
+          ],
+          "x-ms-apimTemplateParameter.nextLinkPropertyName": "next_page.uri"
+        },
+        "templateId": "updatenextlink",
+        "title": "Updates next link to make pagination work."
+      },
+      {
+        "templateId": "SetProperty",
+        "title": "Rename data to value for tasks to make pagination work.",
+        "parameters": {
+          "x-ms-apimTemplate-operationName": [
+            "GetTasks"
+          ],
+          "x-ms-apimTemplateParameter.newPropertyParentPathTemplate": "@body()",
+          "x-ms-apimTemplateParameter.newPropertySubPathTemplate": "value",
+          "x-ms-apimTemplateParameter.propertyValuePathTemplate": "{@body().data}",
+          "x-ms-apimTemplate-policySection": "Response"
+        }
+      }
+    ],
     "capabilities": [],
     "publisher": "Vladislav Kosev"
   }

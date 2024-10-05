@@ -1,0 +1,40 @@
+{
+	"folders": [
+		{
+			"path": "Asana"
+		},
+		{
+			"path": "Basecamp"
+		},
+		{
+			"path": "Everhour"
+		}
+	],
+	"settings": {
+		"json.schemas": [
+			{
+				"fileMatch": [
+					"/apiDefinition.swagger.json"
+				],
+				"url": "https://github.com/microsoft/PowerPlatformConnectors/raw/refs/heads/dev/schemas/apiDefinition.swagger.schema.json"
+			},
+			{
+				"fileMatch": [
+					"/apiProperties.json"
+				],
+				"url": "https://github.com/microsoft/PowerPlatformConnectors/raw/refs/heads/dev/schemas/paconn-apiProperties.schema.json"
+			},
+			{
+				"fileMatch": [
+					"shared_*/settings.json"
+				],
+				"url": "https://github.com/microsoft/PowerPlatformConnectors/raw/refs/heads/dev/schemas/paconn-settings.schema.json"
+			}
+		]
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+		]
+	}
+}
