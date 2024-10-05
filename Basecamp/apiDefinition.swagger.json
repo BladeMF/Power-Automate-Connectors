@@ -12,7 +12,62 @@
   ],
   "consumes": [],
   "produces": [],
-  "parameters": {},
+  "parameters": {
+    "projectId": {
+      "name": "projectId",
+      "description": "The project id",
+      "format": "int32",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "x-ms-summary": "Project ID",
+      "x-ms-dynamic-values": {
+        "operationId": "GetProjects",
+        "value-path": "id",
+        "value-title": "name"
+      }
+    },
+    "columnId": {
+      "name": "columnId",
+      "description": "The column id",
+      "format": "int32",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "x-ms-summary": "Column ID",
+      "x-ms-visibility": "important"
+    },
+    "cardId": {
+      "name": "cardId",
+      "description": "The card id",
+      "format": "int32",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "x-ms-summary": "Card ID",
+      "x-ms-visibility": "important"
+    },
+    "todoListId": {
+      "name": "listId",
+      "description": "The list id",
+      "format": "int32",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "x-ms-summary": "List ID",
+      "x-ms-visibility": "important"
+    },
+    "todoId": {
+      "name": "todoId",
+      "description": "The to-do id",
+      "format": "int32",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "x-ms-summary": "To-Do ID",
+      "x-ms-visibility": "important"
+    }
+  },
   "paths": {
     "/projects.json": {
       "get": {
@@ -30,7 +85,6 @@
         "summary": "Get projects",
         "operationId": "GetProjects",
         "description": "Returns a list of all the projects",
-        "x-ms-visibility": "important",
         "parameters": []
       }
     },
@@ -45,32 +99,12 @@
         "summary": "Create a card",
         "description": "Creates a card in a table",
         "operationId": "CreateCard",
-        "x-ms-visibility": "important",
         "parameters": [
           {
-            "name": "projectId",
-            "description": "The project id",
-            "format": "integer",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "x-ms-summary": "Project ID",
-            "x-ms-visibility": "important",
-            "x-ms-dynamic-values": {
-              "operationId": "GetProjects",
-              "value-path": "id",
-              "value-title": "name"
-            }
+            "$ref": "#/parameters/projectId"
           },
           {
-            "name": "columnId",
-            "description": "The column id",
-            "format": "integer",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "x-ms-summary": "Column ID",
-            "x-ms-visibility": "important"
+            "$ref": "#/parameters/columnId"
           },
           {
             "name": "body",
@@ -80,37 +114,103 @@
               "type": "object",
               "properties": {
                 "title": {
-                  "type": "string",
-                  "description": "The title of the card",
-                  "title": "Title",
-                  "x-ms-visibility": "important"
+                  "$ref": "#/definitions/card_title"
                 },
                 "content": {
-                  "type": "string",
-                  "description": "containing information about the card.",
-                  "title": "Content",
-                  "x-ms-visibility": "important"
+                  "$ref": "#/definitions/card_content"
                 },
                 "due_on": {
-                  "type": "string",
-                  "description": "due date (ISO 8601) of the card",
-                  "title": "Due on",
-                  "format": "date"
+                  "$ref": "#/definitions/due_on"
                 },
                 "notify": {
-                  "type": "boolean",
-                  "description": "whether to notify assignees, value true or false. Defaults to false.",
-                  "title": "Notify",
-                  "format": "bool",
-                  "x-ms-visibility": "important"
+                  "$ref": "#/definitions/notify"
                 }
               },
-              "x-ms-visibility": "important",
               "required": [
                 "title"
               ]
-            },
-            "x-ms-visibility": "important"
+            }
+          }
+        ]
+      }
+    },
+    "/buckets/{projectId}/card_tables/cards/{cardId}.json": {
+      "put": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Updates a card",
+        "description": "Updates a card in a table",
+        "operationId": "UpdateCard",
+        "parameters": [
+          {
+            "$ref": "#/parameters/projectId"
+          },
+          {
+            "$ref": "#/parameters/cardId"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "$ref": "#/definitions/card_title"
+                },
+                "content": {
+                  "$ref": "#/definitions/card_content"
+                },
+                "due_on": {
+                  "$ref": "#/definitions/due_on"
+                },
+                "assignee_ids": {
+                  "$ref": "#/definitions/assignee_ids"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/buckets/{projectId}/card_tables/cards/{cardId}/moves.json": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Move a card",
+        "operationId": "MoveCard",
+        "x-ms-visibility": "important",
+        "description": "Move a card to a column",
+        "parameters": [
+          {
+            "$ref": "#/parameters/projectId"
+          },
+          {
+            "$ref": "#/parameters/cardId"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "columnId": {
+                  "type": "integer",
+                  "description": "column_id of the column destination",
+                  "title": "Column ID",
+                  "x-ms-visibility": "important"
+                }
+              }
+            }
           }
         ]
       }
@@ -123,35 +223,16 @@
             "schema": {}
           }
         },
-        "summary": "Create a To-do",
+        "summary": "Create a to-do",
         "operationId": "CreateToDo",
         "x-ms-visibility": "important",
-        "description": "Creates a To-Do",
+        "description": "Creates a to-do",
         "parameters": [
           {
-            "name": "projectId",
-            "description": "The project id",
-            "format": "integer",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "x-ms-summary": "Project ID",
-            "x-ms-visibility": "important",
-            "x-ms-dynamic-values": {
-              "operationId": "GetProjects",
-              "value-path": "id",
-              "value-title": "name"
-            }
+            "$ref": "#/parameters/projectId"
           },
           {
-            "name": "listId",
-            "description": "The list id",
-            "format": "integer",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "x-ms-summary": "List ID",
-            "x-ms-visibility": "important"
+            "$ref": "#/parameters/todoListId"
           },
           {
             "name": "body",
@@ -161,53 +242,25 @@
               "type": "object",
               "properties": {
                 "content": {
-                  "type": "string",
-                  "description": "for what the to-do is for.",
-                  "title": "Content",
-                  "x-ms-visibility": "important"
+                  "$ref": "#/definitions/todo_content"
                 },
                 "description": {
-                  "type": "string",
-                  "description": "containing information about the to-do. See our Rich text guide for what HTML tags allowed.",
-                  "title": "Description",
-                  "x-ms-visibility": "important"
+                  "$ref": "#/definitions/todo_description"
                 },
                 "assignee_ids": {
-                  "type": "array",
-                  "description": "an array of people that will be assigned to this to-do. Please see the Get people endpoints to retrieve them.",
-                  "title": "Assignee ids",
-                  "x-ms-visibility": "important",
-                  "items": {
-                    "type": "integer"
-                  }
+                  "$ref": "#/definitions/assignee_ids"
                 },
                 "completion_subscriber_ids": {
-                  "type": "array",
-                  "description": "an array of people that will be notified on to-do completion. Please see the Get people endpoints to retrieve them.",
-                  "title": "Completion subscriber ids",
-                  "x-ms-visibility": "important",
-                  "items": {
-                    "type": "integer"
-                  }
+                  "$ref": "#/definitions/todo_completion_subscriber_ids"
                 },
                 "due_on": {
-                  "type": "string",
-                  "description": "due date (ISO 8601) of the card",
-                  "title": "Due on",
-                  "format": "date"
+                  "$ref": "#/definitions/due_on"
                 },
                 "notify": {
-                  "type": "boolean",
-                  "description": "whether to notify assignees, value true or false. Defaults to false.",
-                  "title": "Notify",
-                  "format": "bool",
-                  "x-ms-visibility": "important"
+                  "$ref": "#/definitions/notify"
                 },
                 "starts_on": {
-                  "type": "string",
-                  "description": "allows the to-do to run from this date to the due_on date.",
-                  "title": "Starts on",
-                  "format": "date"
+                  "$ref": "#/definitions/todo_starts_on"
                 }
               },
               "x-ms-visibility": "important",
@@ -216,6 +269,86 @@
               ]
             },
             "x-ms-visibility": "important"
+          }
+        ]
+      }
+    },
+    "/buckets/{projectId}/todos/{todoId}.json": {
+      "put": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Update a to-do",
+        "operationId": "UpdateToDo",
+        "x-ms-visibility": "important",
+        "description": "Updates a to-do",
+        "parameters": [
+          {
+            "$ref": "#/parameters/projectId"
+          },
+          {
+            "$ref": "#/parameters/todoId"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "$ref": "#/definitions/todo_content"
+                },
+                "description": {
+                  "$ref": "#/definitions/todo_description"
+                },
+                "assignee_ids": {
+                  "$ref": "#/definitions/assignee_ids"
+                },
+                "completion_subscriber_ids": {
+                  "$ref": "#/definitions/todo_completion_subscriber_ids"
+                },
+                "due_on": {
+                  "$ref": "#/definitions/due_on"
+                },
+                "notify": {
+                  "$ref": "#/definitions/notify"
+                },
+                "starts_on": {
+                  "$ref": "#/definitions/todo_starts_on"
+                }
+              },
+              "x-ms-visibility": "important",
+              "required": [
+                "content"
+              ]
+            },
+            "x-ms-visibility": "important"
+          }
+        ]
+      }
+    },
+    "/buckets/{projectId}/todos/{todoId}/completion.json": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Complete a to-do",
+        "operationId": "CompleteToDo",
+        "x-ms-visibility": "important",
+        "description": "Completes a to-do",
+        "parameters": [
+          {
+            "$ref": "#/parameters/projectId"
+          },
+          {
+            "$ref": "#/parameters/todoId"
           }
         ]
       }
@@ -644,6 +777,65 @@
           },
           "description": "clientside"
         }
+      }
+    },
+    "assignee_ids": {
+      "type": "array",
+      "description": "an array of people that will be assigned to item. Please see the Get people endpoints to retrieve them.",
+      "title": "Assignee ids",
+      "x-ms-visibility": "important",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "due_on": {
+      "type": "string",
+      "description": "due date (ISO 8601) of the card",
+      "title": "Due on",
+      "format": "date"
+    },
+    "notify": {
+      "type": "boolean",
+      "description": "whether to notify assignees, value true or false. Defaults to false.",
+      "title": "Notify"
+    },
+    "card_title": {
+      "type": "string",
+      "description": "The title of the card",
+      "title": "Title",
+      "x-ms-visibility": "important"
+    },
+    "card_content": {
+      "type": "string",
+      "description": "containing information about the card.",
+      "title": "Content",
+      "x-ms-visibility": "important"
+    },
+    "todo_content": {
+      "type": "string",
+      "description": "for what the to-do is for.",
+      "title": "Content",
+      "x-ms-visibility": "important"
+    },
+    "todo_description": {
+      "type": "string",
+      "description": "containing information about the to-do. See our Rich text guide for what HTML tags allowed.",
+      "title": "Description",
+      "x-ms-visibility": "important"
+    },
+    "todo_starts_on": {
+      "type": "string",
+      "description": "allows the to-do to run from this date to the due_on date.",
+      "title": "Starts on",
+      "format": "date"
+    },
+    "todo_completion_subscriber_ids": {
+      "type": "array",
+      "description": "an array of people that will be notified on to-do completion. Please see the Get people endpoints to retrieve them.",
+      "title": "Completion subscriber ids",
+      "x-ms-visibility": "important",
+      "items": {
+        "type": "integer"
       }
     }
   },
