@@ -53,6 +53,19 @@
           "x-ms-apimTemplateParameter.propertyValuePathTemplate": "{@body().data}",
           "x-ms-apimTemplate-policySection": "Response"
         }
+      },
+      {
+        "templateId": "SetProperty",
+        "title": "Clear data property.",
+        "parameters": {
+          "x-ms-apimTemplate-operationName": [
+            "GetTasks"
+          ],
+          "x-ms-apimTemplateParameter.newPropertyParentPathTemplate": "@body()",
+          "x-ms-apimTemplateParameter.newPropertySubPathTemplate": "data",
+          "x-ms-apimTemplateParameter.propertyValuePathTemplate": "[]",
+          "x-ms-apimTemplate-policySection": "Response"
+        }
       }
     ],
     "capabilities": [],
