@@ -280,6 +280,12 @@
                     "$ref": "#/definitions/SectionCompact"
                   }
                 },
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/SectionCompact"
+                  }
+                },
                 "next_page": {
                   "allOf": [
                     {
@@ -497,6 +503,12 @@
               "type": "object",
               "properties": {
                 "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/TaskCompact"
+                  }
+                },
+                "value": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/TaskCompact"
@@ -727,6 +739,12 @@
               "type": "object",
               "properties": {
                 "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/StoryCompact"
+                  }
+                },
+                "value": {
                   "type": "array",
                   "items": {
                     "$ref": "#/definitions/StoryCompact"

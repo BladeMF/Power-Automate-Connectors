@@ -142,7 +142,7 @@
             "schema": {}
           }
         },
-        "summary": "Updates a card",
+        "summary": "Update a card",
         "description": "Updates a card in a table",
         "operationId": "UpdateCard",
         "parameters": [
@@ -180,8 +180,8 @@
     "/buckets/{projectId}/card_tables/cards/{cardId}/moves.json": {
       "post": {
         "responses": {
-          "default": {
-            "description": "default",
+          "204": {
+            "description": "Success",
             "schema": {}
           }
         },
@@ -203,7 +203,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "columnId": {
+                "column_id": {
                   "type": "integer",
                   "description": "column_id of the column destination",
                   "title": "Column ID",
