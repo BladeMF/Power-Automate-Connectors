@@ -16,7 +16,7 @@
     "projectId": {
       "name": "projectId",
       "description": "The project id",
-      "format": "int32",
+      "format": "int64",
       "in": "path",
       "required": true,
       "type": "integer",
@@ -30,7 +30,7 @@
     "columnId": {
       "name": "columnId",
       "description": "The column id",
-      "format": "int32",
+      "format": "int64",
       "in": "path",
       "required": true,
       "type": "integer",
@@ -40,7 +40,7 @@
     "cardId": {
       "name": "cardId",
       "description": "The card id",
-      "format": "int32",
+      "format": "int64",
       "in": "path",
       "required": true,
       "type": "integer",
@@ -50,7 +50,7 @@
     "todoListId": {
       "name": "listId",
       "description": "The list id",
-      "format": "int32",
+      "format": "int64",
       "in": "path",
       "required": true,
       "type": "integer",
@@ -60,7 +60,7 @@
     "todoId": {
       "name": "todoId",
       "description": "The to-do id",
-      "format": "int32",
+      "format": "int64",
       "in": "path",
       "required": true,
       "type": "integer",
