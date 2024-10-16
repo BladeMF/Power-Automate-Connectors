@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "Flow Schema"
+		},
+		{
+			"path": "Flows"
 		}
 	],
 	"settings": {

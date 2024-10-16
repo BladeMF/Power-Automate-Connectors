@@ -1,0 +1,817 @@
+{
+  "$schema": "https://power-automate-tools.local/flow-editor.json#",
+  "connectionReferences": {
+    "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4": {
+      "connectionName": "19a54966-fc23-4abc-8b40-39873d5db223",
+      "connectionReferenceLogicalName": "new_sharedasana2025f225a39949ff7e0b25f3b76c9731dcd3ca4_2def7",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Asana 2",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241013t000000zc6251930b7c64b6aa631fcf580034a42/icon.png",
+      "brandColor": "#ffffff",
+      "tier": "NotSpecified"
+    },
+    "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2": {
+      "connectionName": "ec67e872d1a543f0909c36aa0b2aa35c",
+      "connectionReferenceLogicalName": "ct_BasecampVladi",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Basecamp 4",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241015t000000z29d88e90456c459fa79bd87ef17af6c7/icon.png",
+      "brandColor": "#fae34c",
+      "tier": "NotSpecified"
+    },
+    "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3": {
+      "connectionName": "shared-basecamp-204--0facf1fb-4f09-4d12-bff7-f2774f0f15a7",
+      "connectionReferenceLogicalName": "ct_BasecampVladiPersonal",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Basecamp 4",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241015t000000z29d88e90456c459fa79bd87ef17af6c7/icon.png",
+      "brandColor": "#fae34c",
+      "tier": "NotSpecified"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {
+          "operationMetadataId": "7240eff8-9bec-408c-8a37-57fb01a3bb8a"
+        },
+        "type": "Request",
+        "kind": "Button",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "description": "1204598815500662",
+                "title": "Project ID",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "text_1": {
+                "description": "1204598815500664",
+                "title": "Section ID",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "number": {
+                "title": "Basecamp ProjectID",
+                "type": "number",
+                "x-ms-dynamically-added": true,
+                "description": "Please enter a number",
+                "x-ms-content-hint": "NUMBER"
+              },
+              "number_1": {
+                "title": "Task Limit",
+                "type": "number",
+                "x-ms-dynamically-added": true,
+                "description": "Please enter a number",
+                "x-ms-content-hint": "NUMBER"
+              },
+              "number_2": {
+                "title": "Basecamp Done Column ID",
+                "type": "number",
+                "x-ms-dynamically-added": true,
+                "description": "7832491326",
+                "x-ms-content-hint": "NUMBER"
+              },
+              "text_2": {
+                "title": "Create",
+                "type": "string",
+                "x-ms-dynamically-added": true,
+                "description": "Cards",
+                "x-ms-content-hint": "TEXT",
+                "enum": [
+                  "Cards",
+                  "Tasks"
+                ]
+              }
+            },
+            "required": [
+              "number",
+              "number_2",
+              "text_2"
+            ]
+          },
+          "headersSchema": {
+            "x-ms-user-name-encoded": {
+              "title": "User name",
+              "type": "string",
+              "format": "byte",
+              "x-ms-dynamically-added": false
+            },
+            "x-ms-user-email-encoded": {
+              "title": "User email",
+              "type": "string",
+              "format": "byte",
+              "x-ms-dynamically-added": false
+            },
+            "x-ms-user-timestamp": {
+              "title": "Timestamp",
+              "type": "string",
+              "x-ms-dynamically-added": false
+            }
+          }
+        },
+        "conditions": []
+      }
+    },
+    "actions": {
+      "Initialise_taskFields": {
+        "runAfter": {},
+        "metadata": {
+          "operationMetadataId": "3c628cbe-f2ab-4c27-bc59-5166319f1da9"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "taskFields",
+              "type": "array",
+              "value": [
+                "name",
+                "resource_type",
+                "resource_subtype",
+                "assignee",
+                "assignee.name",
+                "created_at",
+                "created_by",
+                "custom_fields.name",
+                "completed_by",
+                "completed_by.name",
+                "due_at",
+                "due_on",
+                "external",
+                "followers",
+                "followers.name",
+                "html_notes",
+                "tags.name",
+                "parent",
+                "parent.name",
+                "memberships.section",
+                "memberships.section.name",
+                "followers",
+                "followers.name"
+              ]
+            }
+          ]
+        }
+      },
+      "Initialise_tasks": {
+        "runAfter": {
+          "Initialise_taskFields": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "37446a49-b0b7-4176-af75-b3f79d76ad74"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "tasks",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "If_section_id_is_set_or_are_we_using_the_project_id": {
+        "actions": {
+          "Get_tasks_by_SectionID": {
+            "metadata": {
+              "operationMetadataId": "51bc5857-f3d9-451f-b0e0-c65e711cb923"
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "section": "@triggerBody()?['text_1']",
+                "limit": "@triggerBody()['number_1']",
+                "opt_fields": [
+                  "@variables('taskFields')"
+                ]
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "GetTasks"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "Set_tasks_from_SectionID": {
+            "runAfter": {
+              "Get_tasks_by_SectionID": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "166f8d6e-1c9d-48dc-8e92-21c8edc98289"
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "Tasks",
+              "value": "@outputs('Get_tasks_by_SectionID')?['body/value']"
+            }
+          }
+        },
+        "runAfter": {
+          "Initialise_tasks": [
+            "Succeeded"
+          ]
+        },
+        "else": {
+          "actions": {
+            "Get_tasks_by_ProjectID": {
+              "metadata": {
+                "operationMetadataId": "cb8eed09-f826-4fa1-a18c-9e357fc350f4"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "project": "@triggerBody()?['text']",
+                  "limit": "@triggerBody()['number_1']",
+                  "opt_fields": "@variables('taskFields')"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                  "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                  "operationId": "GetTasks"
+                },
+                "authentication": {
+                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                  "type": "Raw"
+                }
+              }
+            },
+            "Set_tasks_from_ProjectID": {
+              "runAfter": {
+                "Get_tasks_by_ProjectID": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "b7c223d0-b8d1-430b-aaff-bf2d5ac5572f"
+              },
+              "type": "SetVariable",
+              "inputs": {
+                "name": "Tasks",
+                "value": "@outputs('Get_tasks_by_ProjectID')?['body/value']"
+              }
+            }
+          }
+        },
+        "expression": {
+          "not": {
+            "equals": [
+              "@triggerBody()?['text_1']",
+              "@null"
+            ]
+          }
+        },
+        "metadata": {
+          "operationMetadataId": "1f745390-1c1b-44e1-9ed4-dfa5ec7b95f5"
+        },
+        "type": "If"
+      },
+      "Initialise_usersMapping": {
+        "runAfter": {
+          "If_section_id_is_set_or_are_we_using_the_project_id": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "2c847834-0942-4c1b-b281-bb62ab98c4ef"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "usersMapping",
+              "type": "object",
+              "value": {
+                "33192501926992": "46761646",
+                "1108196483313668": "46758270",
+                "1201918551024388": "46764958",
+                "1202404912090694": "46764966",
+                "1165302891579978": "",
+                "1165302891579994": "",
+                "1204779638040825": "",
+                "1204779638040827": "",
+                "1206055494267967": "",
+                "1207540583357090": "",
+                "1207540720335140": "",
+                "1207540720469555": ""
+              }
+            }
+          ]
+        },
+        "description": "Order of people:\n- Alex (992)\n- Vladi (668)\n- Vlado (388)\n- Raffo  (694)\n- Anton (978)\n- Elena (994)\n- Simo (825)\n- Katerina (827)\n- Krisi (967)\n- mgincheva (090)\n- pmanolov (140)\n- azaimov (555)"
+      },
+      "Initialize_connectionMapping": {
+        "runAfter": {
+          "Initialise_usersMapping": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "connectionMapping",
+              "type": "object",
+              "value": {
+                "46758270": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                "46761646": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                "46764958": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                "46764966": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3"
+              }
+            }
+          ]
+        }
+      },
+      "Initialise_columnsMapping": {
+        "runAfter": {
+          "Initialize_connectionMapping": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "31314f4f-9398-4e76-b03a-e9c2f9669255"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "columnsMapping",
+              "type": "object",
+              "value": {
+                "1204598815500664": 7832491321,
+                "1204598815500669": 7832501864,
+                "1204598815500668": 7832491320,
+                "1204903371531182": 7832491323,
+                "1204598815500670": 7832491326
+              }
+            }
+          ]
+        },
+        "description": "Order: Чака Clever -> Чака Clever; Работи се -> Работи се; Backlog -> Not now; Чака ЕРА или външен контрагент -> Чака ЕРА или външен контрагент; Завършена -> Done"
+      },
+      "Initialise_defaultColumnId": {
+        "runAfter": {
+          "Initialise_columnsMapping": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "6a7acca0-453c-4a71-a471-304d2d32449c"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "defaultColumnId",
+              "type": "integer",
+              "value": 7832491319
+            }
+          ]
+        }
+      },
+      "Initialize_columnId": {
+        "runAfter": {
+          "Initialise_defaultColumnId": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "8cbc11d6-6626-4311-96d0-f870f55ac1aa"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "columnId",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "Initialize_createdCardId": {
+        "runAfter": {
+          "Initialize_columnId": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "eb7dbdd4-a508-4e0a-b2c5-43fd13801d05"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "createdCardId",
+              "type": "integer"
+            }
+          ]
+        }
+      },
+      "Initialize_taskTitle": {
+        "runAfter": {
+          "Initialize_createdCardId": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "54e748d5-6b30-49fe-94ef-0874d18371fe"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "taskTitle",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "Initialize_taskContent": {
+        "runAfter": {
+          "Initialize_taskTitle": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "506cd845-d294-4113-9ed7-28bf8ae8e17b"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "taskContent",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "Initialize_createTaskBody": {
+        "runAfter": {
+          "Initialize_taskContent": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "createTaskBody",
+              "type": "Object",
+              "value": {}
+            }
+          ]
+        }
+      },
+      "Tasks": {
+        "foreach": "@variables('Tasks')",
+        "actions": {
+          "Set_columnId_to_default": {
+            "metadata": {
+              "operationMetadataId": "15a18d55-1f3d-451f-baf1-b65459a9a6be"
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "columnId",
+              "value": "@variables('defaultColumnId')"
+            }
+          },
+          "Memberships": {
+            "foreach": "@items('Tasks')['memberships']",
+            "actions": {
+              "If_membership_contains_the_key_\"section\"": {
+                "actions": {
+                  "Map_columnId": {
+                    "metadata": {
+                      "operationMetadataId": "1fec6627-b096-49a4-94b5-9f2c454d4891"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "columnId",
+                      "value": "@int(variables('columnsMapping')[items('Memberships')['section/gid']])"
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {}
+                },
+                "expression": {
+                  "equals": [
+                    "@contains(items('Memberships'), 'section')",
+                    "@true"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "25dd72a8-f1a2-4fb2-9cd3-04bb8f41fb28"
+                },
+                "type": "If"
+              }
+            },
+            "runAfter": {
+              "Set_columnId_to_default": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "bb1574ba-a7d2-459e-b036-16533d77dc1a"
+            },
+            "type": "Foreach",
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            }
+          },
+          "Reset_title_to_empty": {
+            "runAfter": {
+              "Memberships": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "b12c17a0-c3c4-463a-a991-6f45f767e551"
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "taskTitle",
+              "value": "@null"
+            }
+          },
+          "Concat_tags": {
+            "foreach": "@items('Tasks')['tags']",
+            "actions": {
+              "Append_to_tags": {
+                "metadata": {
+                  "operationMetadataId": "562d3c0a-c25e-4a8a-bc72-8fb6a45e08d6"
+                },
+                "type": "AppendToStringVariable",
+                "inputs": {
+                  "name": "taskTitle",
+                  "value": "@concat('[', items('Concat_tags')['name'], ']')"
+                }
+              }
+            },
+            "runAfter": {
+              "Reset_title_to_empty": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "bebd587c-e155-4beb-86f9-22f53fc26b8f"
+            },
+            "type": "Foreach",
+            "runtimeConfiguration": {
+              "concurrency": {
+                "repetitions": 1
+              }
+            }
+          },
+          "Append_taks_name_to_title": {
+            "runAfter": {
+              "Concat_tags": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "6e716edb-cf76-487f-b8f9-5aa86394b17b"
+            },
+            "type": "AppendToStringVariable",
+            "inputs": {
+              "name": "taskTitle",
+              "value": "@concat(if(empty(items('Tasks')['tags']), '', ' '), items('Tasks')['name'])"
+            }
+          },
+          "Set_createTaskBody": {
+            "runAfter": {
+              "Append_taks_name_to_title": [
+                "Succeeded"
+              ]
+            },
+            "metadata": {
+              "operationMetadataId": "44f7410c-0f15-4df3-8b96-503762d1c4c4"
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "createTaskBody",
+              "value": {
+                "title": "@variables('taskTitle')",
+                "content": "@items('Tasks')['html_notes']",
+                "notify": false,
+                "due_on": "@items('Tasks')?['due_on']"
+              }
+            }
+          },
+          "Create_card": {
+            "runAfter": {
+              "Set_createTaskBody": [
+                "Succeeded"
+              ]
+            },
+            "cases": {
+              "Vladi": {
+                "case": "1108196483313668",
+                "actions": {
+                  "Create_a_card_Vladi": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "columnId": "@variables('columnId')",
+                        "projectId": "@triggerBody()['number']",
+                        "body": "@variables('createTaskBody')"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                        "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                        "operationId": "CreateCard"
+                      },
+                      "authentication": {
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                        "type": "Raw"
+                      }
+                    }
+                  },
+                  "Set_createdCardId_Vladi": {
+                    "runAfter": {
+                      "Create_a_card_Vladi": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "createdCardId",
+                      "value": "@body('Create_a_card_Vladi')['id']"
+                    }
+                  }
+                }
+              }
+            },
+            "default": {
+              "actions": {
+                "Create_a_card_Other": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "columnId": "@variables('columnId')",
+                      "projectId": "@triggerBody()['number']",
+                      "body": "@variables('createTaskBody')"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                      "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                      "operationId": "CreateCard"
+                    },
+                    "authentication": {
+                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                      "type": "Raw"
+                    }
+                  }
+                },
+                "Set_createdCardId_Other": {
+                  "runAfter": {
+                    "Create_a_card_Other": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "createdCardId",
+                    "value": "@body('Create_a_card_Other')['id']"
+                  }
+                }
+              }
+            },
+            "expression": "@items('Tasks')['created_by/gid']",
+            "type": "Switch"
+          },
+          "If_task_is_completed": {
+            "actions": {
+              "Switch": {
+                "cases": {
+                  "Vladi-1": {
+                    "case": "1108196483313668",
+                    "actions": {
+                      "Move_the_card_to_Done_column_as_Vladi": {
+                        "metadata": {
+                          "operationMetadataId": "d3a774f5-d2a1-4b6c-b26b-f76f58a83544"
+                        },
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "cardId": "@variables('createdCardId')",
+                            "projectId": "@triggerBody()['number']",
+                            "body/column_id": "@triggerBody()['number_2']"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                            "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                            "operationId": "MoveCard"
+                          },
+                          "authentication": {
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                            "type": "Raw"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "default": {
+                  "actions": {
+                    "Move_the_card_to_Done_column_as_somebody_else": {
+                      "metadata": {
+                        "operationMetadataId": "51e58138-ddee-49e3-a589-85f070ea1887"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "cardId": "@variables('createdCardId')",
+                          "projectId": "@triggerBody()['number']",
+                          "body/column_id": "@triggerBody()['number_2']"
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                          "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                          "operationId": "MoveCard"
+                        },
+                        "authentication": {
+                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                          "type": "Raw"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": "@items('Tasks')['completed_by/gid']",
+                "metadata": {
+                  "operationMetadataId": "927ece2a-29a4-45a2-8151-215e6736ac6b"
+                },
+                "type": "Switch"
+              }
+            },
+            "runAfter": {
+              "Create_card": [
+                "Succeeded"
+              ]
+            },
+            "else": {
+              "actions": {}
+            },
+            "expression": {
+              "not": {
+                "equals": [
+                  "@items('Tasks')?['completed_by']",
+                  "@null"
+                ]
+              }
+            },
+            "metadata": {
+              "operationMetadataId": "8475a668-e938-4c10-b427-f4879f261d2e"
+            },
+            "type": "If"
+          }
+        },
+        "runAfter": {
+          "Initialize_createTaskBody": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "47cd3b24-845c-42e9-bb6d-a993f7baf863"
+        },
+        "type": "Foreach",
+        "runtimeConfiguration": {
+          "concurrency": {
+            "repetitions": 1
+          }
+        }
+      }
+    }
+  }
+}
