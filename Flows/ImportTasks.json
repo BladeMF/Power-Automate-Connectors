@@ -45,6 +45,24 @@
         "type": "Object"
       }
     },
+    "staticResults": {
+      "Create_a_card0": {
+        "status": "Succeeded",
+        "outputs": {
+          "statusCode": "OK",
+          "body": {
+            "id": 4
+          }
+        }
+      },
+      "Move_a_card0": {
+        "status": "Succeeded",
+        "outputs": {
+          "statusCode": "204",
+          "body": {}
+        }
+      }
+    },
     "triggers": {
       "manual": {
         "metadata": {
@@ -622,7 +640,7 @@
               "name": "createTaskBody",
               "value": {
                 "title": "@variables('taskTitle')",
-                "content": "@items('Tasks')['html_notes']",
+                "content": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB') ,')</em></pre>'))",
                 "notify": false,
                 "due_on": "@items('Tasks')?['due_on']"
               }
@@ -654,6 +672,12 @@
                       "authentication": {
                         "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
                         "type": "Raw"
+                      }
+                    },
+                    "runtimeConfiguration": {
+                      "staticResult": {
+                        "staticResultOptions": "Enabled",
+                        "name": "Create_a_card0"
                       }
                     }
                   },
@@ -690,6 +714,12 @@
                     "authentication": {
                       "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
                       "type": "Raw"
+                    }
+                  },
+                  "runtimeConfiguration": {
+                    "staticResult": {
+                      "staticResultOptions": "Enabled",
+                      "name": "Create_a_card0"
                     }
                   }
                 },
@@ -737,6 +767,12 @@
                             "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
                             "type": "Raw"
                           }
+                        },
+                        "runtimeConfiguration": {
+                          "staticResult": {
+                            "staticResultOptions": "Enabled",
+                            "name": "Move_a_card0"
+                          }
                         }
                       }
                     }
@@ -763,6 +799,12 @@
                         "authentication": {
                           "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
                           "type": "Raw"
+                        }
+                      },
+                      "runtimeConfiguration": {
+                        "staticResult": {
+                          "staticResultOptions": "Enabled",
+                          "name": "Move_a_card0"
                         }
                       }
                     }
