@@ -7,7 +7,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Asana 2",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241013t000000zc6251930b7c64b6aa631fcf580034a42/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241017t000000za896ff2bc56144aaa081d85df7ae7343/icon.png",
       "brandColor": "#ffffff",
       "tier": "NotSpecified"
     },
@@ -74,42 +74,49 @@
           "schema": {
             "type": "object",
             "properties": {
-              "text": {
+              "projectId": {
                 "description": "1204598815500662",
                 "title": "Project ID",
                 "type": "string",
                 "x-ms-content-hint": "TEXT",
                 "x-ms-dynamically-added": true
               },
-              "text_1": {
+              "sectionId": {
                 "description": "1204598815500664",
                 "title": "Section ID",
                 "type": "string",
                 "x-ms-content-hint": "TEXT",
                 "x-ms-dynamically-added": true
               },
-              "number": {
+              "workspaceId": {
+                "description": "33192501926998",
+                "title": "Workspace ID",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "basecampProjectId": {
                 "title": "Basecamp ProjectID",
                 "type": "number",
                 "x-ms-dynamically-added": true,
                 "description": "Please enter a number",
                 "x-ms-content-hint": "NUMBER"
               },
-              "number_1": {
+              "taskLimit": {
                 "title": "Task Limit",
                 "type": "number",
                 "x-ms-dynamically-added": true,
                 "description": "Please enter a number",
                 "x-ms-content-hint": "NUMBER"
               },
-              "number_2": {
+              "basecampDoneColumnId": {
                 "title": "Basecamp Done Column ID",
                 "type": "number",
                 "x-ms-dynamically-added": true,
                 "description": "7832491326",
                 "x-ms-content-hint": "NUMBER"
               },
-              "text_2": {
+              "create": {
                 "title": "Create",
                 "type": "string",
                 "x-ms-dynamically-added": true,
@@ -122,9 +129,10 @@
               }
             },
             "required": [
-              "number",
-              "number_2",
-              "text_2"
+              "workspaceId",
+              "basecampDoneColumnId",
+              "basecampProjectId",
+              "create"
             ]
           },
           "headersSchema": {
@@ -161,31 +169,22 @@
           "variables": [
             {
               "name": "taskFields",
-              "type": "array",
+              "type": "Array",
               "value": [
                 "name",
                 "resource_type",
                 "resource_subtype",
-                "assignee",
                 "assignee.name",
                 "created_at",
                 "created_by",
-                "custom_fields.name",
-                "completed_by",
                 "completed_by.name",
                 "due_at",
                 "due_on",
-                "external",
-                "followers",
-                "followers.name",
                 "html_notes",
                 "tags.name",
-                "parent",
-                "parent.name",
-                "memberships.section",
                 "memberships.section.name",
-                "followers",
-                "followers.name"
+                "parent.name",
+                "num_subtasks"
               ]
             }
           ]
@@ -211,6 +210,113 @@
           ]
         }
       },
+      "Initialise_tmpArray": {
+        "runAfter": {
+          "Initialise_tasks": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "tmpArray",
+              "type": "Array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Initialise_users": {
+        "runAfter": {
+          "Initialise_tmpArray": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "users",
+              "type": "Object",
+              "value": {}
+            }
+          ]
+        }
+      },
+      "Initialise_tmpObject": {
+        "runAfter": {
+          "Initialise_users": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "tmpObject",
+              "type": "Object",
+              "value": {}
+            }
+          ]
+        }
+      },
+      "Get_users": {
+        "runAfter": {
+          "Initialise_tmpObject": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "workspace": "@triggerBody()?['workspaceId']",
+            "opt_fields": [
+              "email",
+              "name"
+            ]
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "operationId": "GetUsers"
+          },
+          "authentication": {
+            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+            "type": "Raw"
+          }
+        }
+      },
+      "Cache_users": {
+        "foreach": "@outputs('Get_users')?['body/data']",
+        "actions": {
+          "Copy_to_tmp": {
+            "type": "SetVariable",
+            "inputs": {
+              "name": "tmpObject",
+              "value": "@variables('users')"
+            }
+          },
+          "Add_user": {
+            "runAfter": {
+              "Copy_to_tmp": [
+                "Succeeded"
+              ]
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "users",
+              "value": "@addProperty(variables('tmpObject'), items('Cache_users')['gid'], addProperty(items('Cache_users'), 'ref', concat(items('Cache_users')['name'], ' (', items('Cache_users')['email'], ')')))"
+            }
+          }
+        },
+        "runAfter": {
+          "Get_users": [
+            "Succeeded"
+          ]
+        },
+        "type": "Foreach"
+      },
       "If_section_id_is_set_or_are_we_using_the_project_id": {
         "actions": {
           "Get_tasks_by_SectionID": {
@@ -220,11 +326,9 @@
             "type": "OpenApiConnection",
             "inputs": {
               "parameters": {
-                "section": "@triggerBody()?['text_1']",
-                "limit": "@triggerBody()['number_1']",
-                "opt_fields": [
-                  "@variables('taskFields')"
-                ]
+                "section": "@triggerBody()?['sectionId']",
+                "limit": "@triggerBody()['taskLimit']",
+                "opt_fields": "@variables('taskFields')"
               },
               "host": {
                 "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
@@ -254,7 +358,7 @@
           }
         },
         "runAfter": {
-          "Initialise_tasks": [
+          "Cache_users": [
             "Succeeded"
           ]
         },
@@ -267,8 +371,8 @@
               "type": "OpenApiConnection",
               "inputs": {
                 "parameters": {
-                  "project": "@triggerBody()?['text']",
-                  "limit": "@triggerBody()['number_1']",
+                  "project": "@triggerBody()?['projectId']",
+                  "limit": "@triggerBody()['taskLimit']",
                   "opt_fields": "@variables('taskFields')"
                 },
                 "host": {
@@ -302,7 +406,7 @@
         "expression": {
           "not": {
             "equals": [
-              "@triggerBody()?['text_1']",
+              "@triggerBody()?['sectionId']",
               "@null"
             ]
           }
@@ -508,6 +612,71 @@
           ]
         }
       },
+      "Filter_tasks_with_subtasks": {
+        "runAfter": {
+          "Initialize_createTaskBody": [
+            "Succeeded"
+          ]
+        },
+        "type": "Query",
+        "inputs": {
+          "from": "@variables('Tasks')",
+          "where": "@greater(item()['num_subtasks'],0)"
+        }
+      },
+      "Collect_subtasks": {
+        "foreach": "@body('Filter_tasks_with_subtasks')",
+        "actions": {
+          "Get_subtasks": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "task_gid": "@item()?['gid']",
+                "opt_fields": "@variables('taskFields')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "GetSubtasks"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "Set_tmpArray": {
+            "runAfter": {
+              "Get_subtasks": [
+                "Succeeded"
+              ]
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "tmpArray",
+              "value": "@variables('tasks')"
+            }
+          },
+          "Append_subtasks": {
+            "runAfter": {
+              "Set_tmpArray": [
+                "Succeeded"
+              ]
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "tasks",
+              "value": "@union(variables('tmpArray'), outputs('Get_subtasks')?['body/data'])"
+            }
+          }
+        },
+        "runAfter": {
+          "Filter_tasks_with_subtasks": [
+            "Succeeded"
+          ]
+        },
+        "type": "Foreach"
+      },
       "Tasks": {
         "foreach": "@variables('Tasks')",
         "actions": {
@@ -623,7 +792,7 @@
             "type": "AppendToStringVariable",
             "inputs": {
               "name": "taskTitle",
-              "value": "@concat(if(empty(items('Tasks')['tags']), '', ' '), items('Tasks')['name'])"
+              "value": "@concat(if(empty(items('Tasks')['tags']), '', ' '), items('Tasks')?['parent/name'], if(empty(items('Tasks')?['parent/name']), '', '/'), items('Tasks')['name'])"
             }
           },
           "Set_createTaskBody": {
@@ -640,7 +809,7 @@
               "name": "createTaskBody",
               "value": {
                 "title": "@variables('taskTitle')",
-                "content": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB') ,')</em></pre>'))",
+                "content": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Tasks')['created_by/gid']]['ref'] ,')</em></pre>'))",
                 "notify": false,
                 "due_on": "@items('Tasks')?['due_on']"
               }
@@ -661,7 +830,7 @@
                     "inputs": {
                       "parameters": {
                         "columnId": "@variables('columnId')",
-                        "projectId": "@triggerBody()['number']",
+                        "projectId": "@triggerBody()['basecampProjectId']",
                         "body": "@variables('createTaskBody')"
                       },
                       "host": {
@@ -703,7 +872,7 @@
                   "inputs": {
                     "parameters": {
                       "columnId": "@variables('columnId')",
-                      "projectId": "@triggerBody()['number']",
+                      "projectId": "@triggerBody()['basecampProjectId']",
                       "body": "@variables('createTaskBody')"
                     },
                     "host": {
@@ -755,8 +924,8 @@
                         "inputs": {
                           "parameters": {
                             "cardId": "@variables('createdCardId')",
-                            "projectId": "@triggerBody()['number']",
-                            "body/column_id": "@triggerBody()['number_2']"
+                            "projectId": "@triggerBody()['basecampProjectId']",
+                            "body/column_id": "@triggerBody()['basecampDoneColumnId']"
                           },
                           "host": {
                             "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
@@ -788,8 +957,8 @@
                       "inputs": {
                         "parameters": {
                           "cardId": "@variables('createdCardId')",
-                          "projectId": "@triggerBody()['number']",
-                          "body/column_id": "@triggerBody()['number_2']"
+                          "projectId": "@triggerBody()['basecampProjectId']",
+                          "body/column_id": "@triggerBody()['basecampDoneColumnId']"
                         },
                         "host": {
                           "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
@@ -840,7 +1009,7 @@
           }
         },
         "runAfter": {
-          "Initialize_createTaskBody": [
+          "Collect_subtasks": [
             "Succeeded"
           ]
         },
