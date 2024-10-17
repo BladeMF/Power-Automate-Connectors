@@ -788,6 +788,119 @@
         ],
         "x-ms-visibility": "important"
       }
+    },
+    "/users": {
+      "get": {
+        "summary": "Get multiple users",
+        "description": "Returns the user records for all users in all workspaces and organizations accessible to the authenticated user. Accepts an optional workspace ID parameter. Results are sorted by user ID.",
+        "operationId": "GetUsers",
+        "parameters": [
+          {
+            "name": "workspace",
+            "in": "query",
+            "description": "The workspace or organization ID to filter users on.",
+            "type": "string"
+          },
+          {
+            "name": "team",
+            "in": "query",
+            "description": "The team ID to filter users on.",
+            "type": "string"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/pretty"
+          },
+          {
+            "name": "opt_fields",
+            "in": "query",
+            "description": "This endpoint returns a compact resource, which excludes some properties by default. To include those optional properties, set this query parameter to a comma-separated list of the properties you wish to include.",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "email",
+                "name",
+                "offset",
+                "path",
+                "photo",
+                "photo.image_1024x1024",
+                "photo.image_128x128",
+                "photo.image_21x21",
+                "photo.image_27x27",
+                "photo.image_36x36",
+                "photo.image_60x60",
+                "uri",
+                "workspaces",
+                "workspaces.name"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved requested user records.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/UserCompact"
+                  }
+                },
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/UserCompact"
+                  }
+                },
+                "next_page": {
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/NextPage"
+                    },
+                    {
+                      "$ref": "#/definitions/NullType"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/responses/InternalServerError"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "@odata.nextLink"
+        },
+        "security": [
+          {
+            "oauth2-auth": [
+              "default"
+            ]
+          }
+        ]
+      }
     }
   },
   "parameters": {
