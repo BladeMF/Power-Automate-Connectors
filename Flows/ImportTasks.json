@@ -7,7 +7,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Asana 2",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241017t000000za896ff2bc56144aaa081d85df7ae7343/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241018t000000z0c3b49d91ded40ce945ed8cbeb4ff721/icon.png",
       "brandColor": "#ffffff",
       "tier": "NotSpecified"
     },
@@ -17,7 +17,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241015t000000z29d88e90456c459fa79bd87ef17af6c7/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241018t000000z3147ea0b0be34a7f8c2e556f6779e38c/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     },
@@ -27,7 +27,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241015t000000z29d88e90456c459fa79bd87ef17af6c7/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241018t000000z3147ea0b0be34a7f8c2e556f6779e38c/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     }
@@ -59,6 +59,13 @@
         "status": "Succeeded",
         "outputs": {
           "statusCode": "204",
+          "body": {}
+        }
+      },
+      "Create_a_comment0": {
+        "status": "Succeeded",
+        "outputs": {
+          "statusCode": "201",
           "body": {}
         }
       }
@@ -184,7 +191,8 @@
                 "tags.name",
                 "memberships.section.name",
                 "parent.name",
-                "num_subtasks"
+                "num_subtasks",
+                "permalink_url"
               ]
             }
           ]
@@ -809,7 +817,7 @@
               "name": "createTaskBody",
               "value": {
                 "title": "@variables('taskTitle')",
-                "content": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Tasks')['created_by/gid']]['ref'] ,')</em></pre>'))",
+                "content": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><a href=\"', items('Tasks')['permalink_url'], '\">View in Asana</a><br/><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Tasks')['created_by/gid']]['ref'] ,')</em></pre>'))",
                 "notify": false,
                 "due_on": "@items('Tasks')?['due_on']"
               }
@@ -1006,6 +1014,125 @@
               "operationMetadataId": "8475a668-e938-4c10-b427-f4879f261d2e"
             },
             "type": "If"
+          },
+          "Get_stories": {
+            "runAfter": {
+              "If_task_is_completed": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "task_gid": "@items('Tasks')?['gid']",
+                "opt_fields": [
+                  "html_text",
+                  "created_by",
+                  "created_at",
+                  "likes.user.name",
+                  "resource_subtype",
+                  "story.text",
+                  "type"
+                ]
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "GetStoriesForTask"
+              },
+              "authentication": {
+                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                "type": "Raw"
+              }
+            }
+          },
+          "Filter_stories_to_comments": {
+            "runAfter": {
+              "Get_stories": [
+                "Succeeded"
+              ]
+            },
+            "type": "Query",
+            "inputs": {
+              "from": "@body('Get_stories')['data']",
+              "where": "@equals(item()['type'],'comment')"
+            }
+          },
+          "Add_comments": {
+            "foreach": "@body('Filter_stories_to_comments')",
+            "actions": {
+              "Post_comments": {
+                "cases": {
+                  "Vladi": {
+                    "case": "1108196483313668",
+                    "actions": {
+                      "Post_comment_as_Vladi": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "projectId": "@triggerBody()['basecampProjectId']",
+                            "recordingId": "@variables('createdCardId')",
+                            "body/content": "@replace(items('Add_comments')['html_text'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Add_comments')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Add_comments')['created_by/gid']]['ref'] ,')</em></pre>'))"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                            "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                            "operationId": "CreateComment"
+                          },
+                          "authentication": {
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                            "type": "Raw"
+                          }
+                        },
+                        "runtimeConfiguration": {
+                          "staticResult": {
+                            "staticResultOptions": "Enabled",
+                            "name": "Create_a_comment0"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "default": {
+                  "actions": {
+                    "Post_comment_as_Other": {
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "parameters": {
+                          "projectId": "@triggerBody()['basecampProjectId']",
+                          "recordingId": "@variables('createdCardId')",
+                          "body/content": "@replace(items('Add_comments')['html_text'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Add_comments')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Add_comments')['created_by/gid']]['ref'] ,')</em></pre>'))"
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                          "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                          "operationId": "CreateComment"
+                        },
+                        "authentication": {
+                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                          "type": "Raw"
+                        }
+                      },
+                      "runtimeConfiguration": {
+                        "staticResult": {
+                          "staticResultOptions": "Enabled",
+                          "name": "Create_a_comment0"
+                        }
+                      }
+                    }
+                  }
+                },
+                "expression": "@items('Add_comments')['created_by/gid']",
+                "type": "Switch"
+              }
+            },
+            "runAfter": {
+              "Filter_stories_to_comments": [
+                "Succeeded"
+              ]
+            },
+            "type": "Foreach"
           }
         },
         "runAfter": {

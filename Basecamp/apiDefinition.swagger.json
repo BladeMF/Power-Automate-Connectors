@@ -66,6 +66,16 @@
       "type": "integer",
       "x-ms-summary": "To-Do ID",
       "x-ms-visibility": "important"
+    },
+    "recordingId": {
+      "name": "recordingId",
+      "description": "The recording id",
+      "format": "int64",
+      "in": "path",
+      "required": true,
+      "type": "integer",
+      "x-ms-summary": "Recording ID",
+      "x-ms-visibility": "important"
     }
   },
   "paths": {
@@ -351,6 +361,43 @@
             "$ref": "#/parameters/todoId"
           }
         ]
+      }
+    },
+    "/buckets/{projectId}/recordings/{recordingId}/comments.json": {
+      "post": {
+        "summary": "Create a comment",
+        "description": "Publishes a comment in the project with ID and under the recording with an ID.",
+        "operationId": "CreateComment",
+        "parameters": [
+          {
+            "$ref": "#/parameters/projectId"
+          },
+          {
+            "$ref": "#/parameters/recordingId"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "$ref": "#/definitions/comment_content"
+                }
+              },
+              "required": [
+                "content"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        }
       }
     },
     "/buckets/{projectId}/webhooks.json": {
@@ -837,6 +884,12 @@
       "items": {
         "type": "integer"
       }
+    },
+    "comment_content": {
+      "type": "string",
+      "description": "the body of the message. See our Rich text guide for what HTML tags are allowed.",
+      "title": "Content",
+      "x-ms-visibility": "important"
     }
   },
   "responses": {},
