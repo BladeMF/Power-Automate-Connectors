@@ -212,7 +212,7 @@
           "variables": [
             {
               "name": "tasks",
-              "type": "array",
+              "type": "Array",
               "value": []
             }
           ]
@@ -438,7 +438,7 @@
           "variables": [
             {
               "name": "usersMapping",
-              "type": "object",
+              "type": "Object",
               "value": {
                 "33192501926992": "46761646",
                 "1108196483313668": "46758270",
@@ -469,7 +469,7 @@
           "variables": [
             {
               "name": "connectionMapping",
-              "type": "object",
+              "type": "Object",
               "value": {
                 "46758270": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
                 "46761646": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
@@ -494,7 +494,7 @@
           "variables": [
             {
               "name": "columnsMapping",
-              "type": "object",
+              "type": "Object",
               "value": {
                 "1204598815500664": 7832491321,
                 "1204598815500669": 7832501864,
@@ -521,7 +521,7 @@
           "variables": [
             {
               "name": "defaultColumnId",
-              "type": "integer",
+              "type": "Integer",
               "value": 7832491319
             }
           ]
@@ -541,12 +541,12 @@
           "variables": [
             {
               "name": "columnId",
-              "type": "integer"
+              "type": "Integer"
             }
           ]
         }
       },
-      "Initialize_createdCardId": {
+      "Initialize_createdCardOrTaskId": {
         "runAfter": {
           "Initialize_columnId": [
             "Succeeded"
@@ -559,15 +559,15 @@
         "inputs": {
           "variables": [
             {
-              "name": "createdCardId",
-              "type": "integer"
+              "name": "createdCardOrTaskId",
+              "type": "Integer"
             }
           ]
         }
       },
       "Initialize_taskTitle": {
         "runAfter": {
-          "Initialize_createdCardId": [
+          "Initialize_createdCardOrTaskId": [
             "Succeeded"
           ]
         },
@@ -579,7 +579,7 @@
           "variables": [
             {
               "name": "taskTitle",
-              "type": "string"
+              "type": "String"
             }
           ]
         }
@@ -598,7 +598,7 @@
           "variables": [
             {
               "name": "taskContent",
-              "type": "string"
+              "type": "String"
             }
           ]
         }
@@ -620,9 +620,26 @@
           ]
         }
       },
+      "Initialize_createCommentBody": {
+        "runAfter": {
+          "Initialize_taskContent": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "createCommentBody",
+              "type": "Object",
+              "value": {}
+            }
+          ]
+        }
+      },
       "Filter_tasks_with_subtasks": {
         "runAfter": {
-          "Initialize_createTaskBody": [
+          "Initialize_createCommentBody": [
             "Succeeded"
           ]
         },
@@ -858,7 +875,7 @@
                       }
                     }
                   },
-                  "Set_createdCardId_Vladi": {
+                  "Set_createdCardOrTaskId_Vladi": {
                     "runAfter": {
                       "Create_a_card_Vladi": [
                         "Succeeded"
@@ -866,7 +883,7 @@
                     },
                     "type": "SetVariable",
                     "inputs": {
-                      "name": "createdCardId",
+                      "name": "createdCardOrTaskId",
                       "value": "@body('Create_a_card_Vladi')['id']"
                     }
                   }
@@ -900,7 +917,7 @@
                     }
                   }
                 },
-                "Set_createdCardId_Other": {
+                "Set_createdCardOrTaskId_Other": {
                   "runAfter": {
                     "Create_a_card_Other": [
                       "Succeeded"
@@ -908,7 +925,7 @@
                   },
                   "type": "SetVariable",
                   "inputs": {
-                    "name": "createdCardId",
+                    "name": "createdCardOrTaskId",
                     "value": "@body('Create_a_card_Other')['id']"
                   }
                 }
@@ -931,7 +948,7 @@
                         "type": "OpenApiConnection",
                         "inputs": {
                           "parameters": {
-                            "cardId": "@variables('createdCardId')",
+                            "cardId": "@variables('createdCardOrTaskId')",
                             "projectId": "@triggerBody()['basecampProjectId']",
                             "body/column_id": "@triggerBody()['basecampDoneColumnId']"
                           },
@@ -964,7 +981,7 @@
                       "type": "OpenApiConnection",
                       "inputs": {
                         "parameters": {
-                          "cardId": "@variables('createdCardId')",
+                          "cardId": "@variables('createdCardOrTaskId')",
                           "projectId": "@triggerBody()['basecampProjectId']",
                           "body/column_id": "@triggerBody()['basecampDoneColumnId']"
                         },
@@ -1061,7 +1078,21 @@
           "Add_comments": {
             "foreach": "@body('Filter_stories_to_comments')",
             "actions": {
+              "Set_createCommentBody": {
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "createCommentBody",
+                  "value": {
+                    "content": "@replace(items('Add_comments')['html_text'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Add_comments')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Add_comments')['created_by/gid']]['ref'] ,')</em></pre>'))"
+                  }
+                }
+              },
               "Post_comments": {
+                "runAfter": {
+                  "Set_createCommentBody": [
+                    "Succeeded"
+                  ]
+                },
                 "cases": {
                   "Vladi": {
                     "case": "1108196483313668",
@@ -1071,8 +1102,8 @@
                         "inputs": {
                           "parameters": {
                             "projectId": "@triggerBody()['basecampProjectId']",
-                            "recordingId": "@variables('createdCardId')",
-                            "body/content": "@replace(items('Add_comments')['html_text'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Add_comments')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Add_comments')['created_by/gid']]['ref'] ,')</em></pre>'))"
+                            "recordingId": "@variables('createdCardOrTaskId')",
+                            "body": "@variables('createCommentBody')"
                           },
                           "host": {
                             "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
@@ -1101,8 +1132,8 @@
                       "inputs": {
                         "parameters": {
                           "projectId": "@triggerBody()['basecampProjectId']",
-                          "recordingId": "@variables('createdCardId')",
-                          "body/content": "@replace(items('Add_comments')['html_text'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Add_comments')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Add_comments')['created_by/gid']]['ref'] ,')</em></pre>'))"
+                          "recordingId": "@variables('createdCardOrTaskId')",
+                          "body": "@variables('createCommentBody')"
                         },
                         "host": {
                           "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
