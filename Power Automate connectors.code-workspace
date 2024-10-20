@@ -35,6 +35,13 @@
 					"shared_*/settings.json"
 				],
 				"url": "https://github.com/microsoft/PowerPlatformConnectors/raw/refs/heads/dev/schemas/paconn-settings.schema.json"
+			},
+			{
+				"fileMatch": [
+					"*.flow.json"
+				],
+				"schema": true,
+				"url": "file:///E:\\repos\\Power Automate\\Flow Schema\\schema.json"
 			}
 		]
 	},

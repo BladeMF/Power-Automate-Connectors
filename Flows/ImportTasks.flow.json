@@ -17,7 +17,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241018t000000z3147ea0b0be34a7f8c2e556f6779e38c/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241019t000000zc126b29ae9874d6da96b6f79c2254a2b/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     },
@@ -27,7 +27,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241018t000000z3147ea0b0be34a7f8c2e556f6779e38c/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241019t000000zc126b29ae9874d6da96b6f79c2254a2b/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     }
@@ -102,6 +102,13 @@
                 "x-ms-content-hint": "TEXT",
                 "x-ms-dynamically-added": true
               },
+              "taskLimit": {
+                "title": "Task Limit",
+                "type": "number",
+                "x-ms-dynamically-added": true,
+                "description": "Please enter a number",
+                "x-ms-content-hint": "NUMBER"
+              },
               "basecampProjectId": {
                 "title": "Basecamp ProjectID",
                 "type": "number",
@@ -109,8 +116,8 @@
                 "description": "Please enter a number",
                 "x-ms-content-hint": "NUMBER"
               },
-              "taskLimit": {
-                "title": "Task Limit",
+              "basecampTodoListId": {
+                "title": "Basecamp ProjectID",
                 "type": "number",
                 "x-ms-dynamically-added": true,
                 "description": "Please enter a number",
@@ -166,8 +173,54 @@
       }
     },
     "actions": {
+      "Initialise_columnsMapping": {
+        "metadata": {
+          "operationMetadataId": "31314f4f-9398-4e76-b03a-e9c2f9669255"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "columnsMapping",
+              "type": "Object",
+              "value": {
+                "1204598815500664": 7832491321,
+                "1204598815500669": 7832501864,
+                "1204598815500668": 7832491320,
+                "1204903371531182": 7832491323,
+                "1204598815500670": 7832491326
+              }
+            }
+          ]
+        },
+        "description": "Order: Чака Clever -> Чака Clever; Работи се -> Работи се; Backlog -> Not now; Чака ЕРА или външен контрагент -> Чака ЕРА или външен контрагент; Завършена -> Done"
+      },
+      "Initialise_defaultColumnId": {
+        "runAfter": {
+          "Initialise_columnsMapping": [
+            "Succeeded"
+          ]
+        },
+        "metadata": {
+          "operationMetadataId": "6a7acca0-453c-4a71-a471-304d2d32449c"
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "defaultColumnId",
+              "type": "Integer",
+              "value": 7832491319
+            }
+          ]
+        }
+      },
       "Initialise_taskFields": {
-        "runAfter": {},
+        "runAfter": {
+          "Initialise_defaultColumnId": [
+            "Succeeded"
+          ]
+        },
         "metadata": {
           "operationMetadataId": "3c628cbe-f2ab-4c27-bc59-5166319f1da9"
         },
@@ -480,56 +533,9 @@
           ]
         }
       },
-      "Initialise_columnsMapping": {
-        "runAfter": {
-          "Initialize_connectionMapping": [
-            "Succeeded"
-          ]
-        },
-        "metadata": {
-          "operationMetadataId": "31314f4f-9398-4e76-b03a-e9c2f9669255"
-        },
-        "type": "InitializeVariable",
-        "inputs": {
-          "variables": [
-            {
-              "name": "columnsMapping",
-              "type": "Object",
-              "value": {
-                "1204598815500664": 7832491321,
-                "1204598815500669": 7832501864,
-                "1204598815500668": 7832491320,
-                "1204903371531182": 7832491323,
-                "1204598815500670": 7832491326
-              }
-            }
-          ]
-        },
-        "description": "Order: Чака Clever -> Чака Clever; Работи се -> Работи се; Backlog -> Not now; Чака ЕРА или външен контрагент -> Чака ЕРА или външен контрагент; Завършена -> Done"
-      },
-      "Initialise_defaultColumnId": {
-        "runAfter": {
-          "Initialise_columnsMapping": [
-            "Succeeded"
-          ]
-        },
-        "metadata": {
-          "operationMetadataId": "6a7acca0-453c-4a71-a471-304d2d32449c"
-        },
-        "type": "InitializeVariable",
-        "inputs": {
-          "variables": [
-            {
-              "name": "defaultColumnId",
-              "type": "Integer",
-              "value": 7832491319
-            }
-          ]
-        }
-      },
       "Initialize_columnId": {
         "runAfter": {
-          "Initialise_defaultColumnId": [
+          "Initialize_connectionMapping": [
             "Succeeded"
           ]
         },
@@ -546,9 +552,25 @@
           ]
         }
       },
-      "Initialize_createdCardOrTaskId": {
+      "Initialize_sectionId": {
         "runAfter": {
           "Initialize_columnId": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "sectionId",
+              "type": "String"
+            }
+          ]
+        }
+      },
+      "Initialize_createdCardOrTaskId": {
+        "runAfter": {
+          "Initialize_sectionId": [
             "Succeeded"
           ]
         },
@@ -622,7 +644,7 @@
       },
       "Initialize_createCommentBody": {
         "runAfter": {
-          "Initialize_taskContent": [
+          "Initialize_createTaskBody": [
             "Succeeded"
           ]
         },
@@ -705,14 +727,14 @@
       "Tasks": {
         "foreach": "@variables('Tasks')",
         "actions": {
-          "Set_columnId_to_default": {
+          "Set_sectionId_to_default": {
             "metadata": {
               "operationMetadataId": "15a18d55-1f3d-451f-baf1-b65459a9a6be"
             },
             "type": "SetVariable",
             "inputs": {
-              "name": "columnId",
-              "value": "@variables('defaultColumnId')"
+              "name": "sectionId",
+              "value": "@null"
             }
           },
           "Memberships": {
@@ -720,14 +742,14 @@
             "actions": {
               "If_membership_contains_the_key_\"section\"": {
                 "actions": {
-                  "Map_columnId": {
+                  "Set_sectionId": {
                     "metadata": {
                       "operationMetadataId": "1fec6627-b096-49a4-94b5-9f2c454d4891"
                     },
                     "type": "SetVariable",
                     "inputs": {
-                      "name": "columnId",
-                      "value": "@int(variables('columnsMapping')[items('Memberships')['section/gid']])"
+                      "name": "sectionId",
+                      "value": "@items('Memberships')['section/gid']"
                     }
                   }
                 },
@@ -747,7 +769,7 @@
               }
             },
             "runAfter": {
-              "Set_columnId_to_default": [
+              "Set_sectionId_to_default": [
                 "Succeeded"
               ]
             },
@@ -761,9 +783,21 @@
               }
             }
           },
-          "Reset_title_to_empty": {
+          "Map_columnId": {
             "runAfter": {
               "Memberships": [
+                "Succeeded"
+              ]
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "columnId",
+              "value": "@if(contains(variables('columnsMapping'), variables('sectionId')), int(variables('columnsMapping')[variables('sectionId')]), variables('defaultColumnId'))"
+            }
+          },
+          "Reset_title_to_empty": {
+            "runAfter": {
+              "Map_columnId": [
                 "Succeeded"
               ]
             },
@@ -820,9 +854,21 @@
               "value": "@concat(if(empty(items('Tasks')['tags']), '', ' '), items('Tasks')?['parent/name'], if(empty(items('Tasks')?['parent/name']), '', '/'), items('Tasks')['name'])"
             }
           },
-          "Set_createTaskBody": {
+          "Set_taskContent": {
             "runAfter": {
               "Append_taks_name_to_title": [
+                "Succeeded"
+              ]
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "taskContent",
+              "value": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><a href=\"', items('Tasks')['permalink_url'], '\">View in Asana</a><br/><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Tasks')['created_by/gid']]['ref'] ,')</em></pre>'))"
+            }
+          },
+          "Set_createTaskBody": {
+            "runAfter": {
+              "Set_taskContent": [
                 "Succeeded"
               ]
             },
@@ -834,7 +880,7 @@
               "name": "createTaskBody",
               "value": {
                 "title": "@variables('taskTitle')",
-                "content": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><a href=\"', items('Tasks')['permalink_url'], '\">View in Asana</a><br/><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Tasks')['created_by/gid']]['ref'] ,')</em></pre>'))",
+                "content": "@variables('taskContent')",
                 "notify": false,
                 "due_on": "@items('Tasks')?['due_on']"
               }
@@ -847,10 +893,10 @@
               ]
             },
             "cases": {
-              "Vladi": {
+              "Create_card_case_Vladi": {
                 "case": "1108196483313668",
                 "actions": {
-                  "Create_a_card_Vladi": {
+                  "Create_a_card_as_Vladi": {
                     "type": "OpenApiConnection",
                     "inputs": {
                       "parameters": {
@@ -877,14 +923,14 @@
                   },
                   "Set_createdCardOrTaskId_Vladi": {
                     "runAfter": {
-                      "Create_a_card_Vladi": [
+                      "Create_a_card_as_Vladi": [
                         "Succeeded"
                       ]
                     },
                     "type": "SetVariable",
                     "inputs": {
                       "name": "createdCardOrTaskId",
-                      "value": "@body('Create_a_card_Vladi')['id']"
+                      "value": "@body('Create_a_card_as_Vladi')['id']"
                     }
                   }
                 }
@@ -892,7 +938,7 @@
             },
             "default": {
               "actions": {
-                "Create_a_card_Other": {
+                "Create_a_card_as_Other": {
                   "type": "OpenApiConnection",
                   "inputs": {
                     "parameters": {
@@ -919,14 +965,14 @@
                 },
                 "Set_createdCardOrTaskId_Other": {
                   "runAfter": {
-                    "Create_a_card_Other": [
+                    "Create_a_card_as_Other": [
                       "Succeeded"
                     ]
                   },
                   "type": "SetVariable",
                   "inputs": {
                     "name": "createdCardOrTaskId",
-                    "value": "@body('Create_a_card_Other')['id']"
+                    "value": "@body('Create_a_card_as_Other')['id']"
                   }
                 }
               }
@@ -1094,7 +1140,7 @@
                   ]
                 },
                 "cases": {
-                  "Vladi": {
+                  "Post_comments_as_Vladi": {
                     "case": "1108196483313668",
                     "actions": {
                       "Post_comment_as_Vladi": {
