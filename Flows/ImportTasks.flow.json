@@ -55,6 +55,15 @@
           }
         }
       },
+      "Update_a_card0": {
+        "status": "Succeeded",
+        "outputs": {
+          "statusCode": "OK",
+          "body": {
+            "id": 4
+          }
+        }
+      },
       "Move_a_card0": {
         "status": "Succeeded",
         "outputs": {
@@ -477,9 +486,25 @@
         },
         "type": "If"
       },
-      "Initialise_usersMapping": {
+      "Initialise_defaultUserId": {
         "runAfter": {
           "If_section_id_is_set_or_are_we_using_the_project_id": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "defaultUserId",
+              "type": "String"
+            }
+          ]
+        }
+      },
+      "Initialise_usersMapping": {
+        "runAfter": {
+          "Initialise_defaultUserId": [
             "Succeeded"
           ]
         },
@@ -511,7 +536,7 @@
         },
         "description": "Order of people:\n- Alex (992)\n- Vladi (668)\n- Vlado (388)\n- Raffo  (694)\n- Anton (978)\n- Elena (994)\n- Simo (825)\n- Katerina (827)\n- Krisi (967)\n- mgincheva (090)\n- pmanolov (140)\n- azaimov (555)"
       },
-      "Initialize_connectionMapping": {
+      "Initialize_assigneeId": {
         "runAfter": {
           "Initialise_usersMapping": [
             "Succeeded"
@@ -521,21 +546,16 @@
         "inputs": {
           "variables": [
             {
-              "name": "connectionMapping",
-              "type": "Object",
-              "value": {
-                "46758270": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
-                "46761646": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
-                "46764958": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
-                "46764966": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3"
-              }
+              "name": "assigneeId",
+              "type": "String",
+              "value": ""
             }
           ]
         }
       },
       "Initialize_columnId": {
         "runAfter": {
-          "Initialize_connectionMapping": [
+          "Initialize_assigneeId": [
             "Succeeded"
           ]
         },
@@ -854,9 +874,21 @@
               "value": "@concat(if(empty(items('Tasks')['tags']), '', ' '), items('Tasks')?['parent/name'], if(empty(items('Tasks')?['parent/name']), '', '/'), items('Tasks')['name'])"
             }
           },
-          "Set_taskContent": {
+          "Set_assigneeId": {
             "runAfter": {
               "Append_taks_name_to_title": [
+                "Succeeded"
+              ]
+            },
+            "type": "SetVariable",
+            "inputs": {
+              "name": "assigneeId",
+              "value": "@if(equals(items('Tasks')?['assignee'], null), null, if(contains(variable('usersMapping'), items('Tasks')['assignee/gid']), variable('usersMapping')[items('Tasks')['assignee/gid']], variables('defaultUserId')))"
+            }
+          },
+          "Set_taskContent": {
+            "runAfter": {
+              "Set_assigneeId": [
                 "Succeeded"
               ]
             },
@@ -980,6 +1012,51 @@
             "expression": "@items('Tasks')['created_by/gid']",
             "type": "Switch"
           },
+          "If_task_is_assigned": {
+            "actions": {
+              "Assign_card": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "cardId": "@variables('createdCardOrTaskId')",
+                    "projectId": "@triggerBody()['basecampProjectId']",
+                    "body/assignee_ids": [
+                      "@variables('assigneeId')"
+                    ]
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                    "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                    "operationId": "UpdateCard"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                },
+                "runtimeConfiguration": {
+                  "staticResult": {
+                    "staticResultOptions": "Enabled",
+                    "name": "Update_a_card0"
+                  }
+                }
+              }
+            },
+            "runAfter": {
+              "Create_card": [
+                "Succeeded"
+              ]
+            },
+            "expression": {
+              "not": {
+                "equals": [
+                  "@variables('assigneeId')",
+                  "@null"
+                ]
+              }
+            },
+            "type": "If"
+          },
           "If_task_is_completed": {
             "actions": {
               "Switch": {
@@ -1058,7 +1135,7 @@
               }
             },
             "runAfter": {
-              "Create_card": [
+              "If_task_is_assigned": [
                 "Succeeded"
               ]
             },
