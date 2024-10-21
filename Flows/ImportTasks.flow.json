@@ -147,7 +147,7 @@
                 "x-ms-content-hint": "TEXT",
                 "enum": [
                   "Cards",
-                  "Tasks"
+                  "ToDos"
                 ]
               }
             },
@@ -679,9 +679,42 @@
           ]
         }
       },
-      "Filter_tasks_with_subtasks": {
+      "Initialize_createTaskParameters": {
         "runAfter": {
           "Initialize_createCommentBody": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "createTaskParameters",
+              "type": "Object",
+              "value": {}
+            }
+          ]
+        }
+      },
+      "Initialize_createTaskOperationId": {
+        "runAfter": {
+          "Initialize_createTaskParameters": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "createTaskOperationId",
+              "type": "String"
+            }
+          ]
+        }
+      },
+      "Filter_tasks_with_subtasks": {
+        "runAfter": {
+          "Initialize_createTaskOperationId": [
             "Succeeded"
           ]
         },
@@ -898,187 +931,183 @@
               "value": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><a href=\"', items('Tasks')['permalink_url'], '\">View in Asana</a><br/><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Tasks')['created_by/gid']]['ref'] ,')</em></pre>'))"
             }
           },
-          "Set_createTaskBody": {
+          "Create": {
             "runAfter": {
               "Set_taskContent": [
                 "Succeeded"
               ]
             },
-            "metadata": {
-              "operationMetadataId": "44f7410c-0f15-4df3-8b96-503762d1c4c4"
-            },
-            "type": "SetVariable",
-            "inputs": {
-              "name": "createTaskBody",
-              "value": {
-                "title": "@variables('taskTitle')",
-                "content": "@variables('taskContent')",
-                "notify": false,
-                "due_on": "@items('Tasks')?['due_on']"
-              }
-            }
-          },
-          "Create_card": {
-            "runAfter": {
-              "Set_createTaskBody": [
-                "Succeeded"
-              ]
-            },
             "cases": {
-              "Create_card_case_Vladi": {
-                "case": "1108196483313668",
+              "Cards": {
+                "case": "Cards",
                 "actions": {
-                  "Create_a_card_as_Vladi": {
-                    "type": "OpenApiConnection",
-                    "inputs": {
-                      "parameters": {
-                        "columnId": "@variables('columnId')",
-                        "projectId": "@triggerBody()['basecampProjectId']",
-                        "body": "@variables('createTaskBody')"
-                      },
-                      "host": {
-                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                        "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
-                        "operationId": "CreateCard"
-                      },
-                      "authentication": {
-                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                        "type": "Raw"
-                      }
-                    },
-                    "runtimeConfiguration": {
-                      "staticResult": {
-                        "staticResultOptions": "Enabled",
-                        "name": "Create_a_card0"
-                      }
-                    }
-                  },
-                  "Set_createdCardOrTaskId_Vladi": {
-                    "runAfter": {
-                      "Create_a_card_as_Vladi": [
-                        "Succeeded"
-                      ]
+                  "Set_Create_card_body": {
+                    "metadata": {
+                      "operationMetadataId": "44f7410c-0f15-4df3-8b96-503762d1c4c4"
                     },
                     "type": "SetVariable",
                     "inputs": {
-                      "name": "createdCardOrTaskId",
-                      "value": "@body('Create_a_card_as_Vladi')['id']"
+                      "name": "createTaskBody",
+                      "value": {
+                        "title": "@variables('taskTitle')",
+                        "content": "@variables('taskContent')",
+                        "notify": false,
+                        "due_on": "@items('Tasks')?['due_on']"
+                      }
                     }
-                  }
-                }
-              }
-            },
-            "default": {
-              "actions": {
-                "Create_a_card_as_Other": {
-                  "type": "OpenApiConnection",
-                  "inputs": {
-                    "parameters": {
-                      "columnId": "@variables('columnId')",
-                      "projectId": "@triggerBody()['basecampProjectId']",
-                      "body": "@variables('createTaskBody')"
+                  },
+                  "Create_card": {
+                    "runAfter": {
+                      "Set_Create_card_body": [
+                        "Succeeded"
+                      ]
                     },
-                    "host": {
-                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                      "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
-                      "operationId": "CreateCard"
+                    "cases": {
+                      "Create_card_case_Vladi": {
+                        "case": "1108196483313668",
+                        "actions": {
+                          "Create_a_card_as_Vladi": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "columnId": "@variables('columnId')",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                "operationId": "CreateCard"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Enabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_createdCardOrTaskId_Vladi": {
+                            "runAfter": {
+                              "Create_a_card_as_Vladi": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_card_as_Vladi')['id']"
+                            }
+                          }
+                        }
+                      },
+                      "Create_card_case_Alex": {
+                        "case": "33192501926992",
+                        "actions": {
+                          "Create_a_card_as_Alex": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "columnId": "@variables('columnId')",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                "operationId": "CreateCard"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Enabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_createdCardOrTaskId_Alex": {
+                            "runAfter": {
+                              "Create_a_card_as_Alex": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_card_as_Alex')['id']"
+                            }
+                          }
+                        }
+                      }
                     },
-                    "authentication": {
-                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                      "type": "Raw"
-                    }
-                  },
-                  "runtimeConfiguration": {
-                    "staticResult": {
-                      "staticResultOptions": "Enabled",
-                      "name": "Create_a_card0"
-                    }
-                  }
-                },
-                "Set_createdCardOrTaskId_Other": {
-                  "runAfter": {
-                    "Create_a_card_as_Other": [
-                      "Succeeded"
-                    ]
-                  },
-                  "type": "SetVariable",
-                  "inputs": {
-                    "name": "createdCardOrTaskId",
-                    "value": "@body('Create_a_card_as_Other')['id']"
-                  }
-                }
-              }
-            },
-            "expression": "@items('Tasks')['created_by/gid']",
-            "type": "Switch"
-          },
-          "If_task_is_assigned": {
-            "actions": {
-              "Assign_card": {
-                "type": "OpenApiConnection",
-                "inputs": {
-                  "parameters": {
-                    "cardId": "@variables('createdCardOrTaskId')",
-                    "projectId": "@triggerBody()['basecampProjectId']",
-                    "body/assignee_ids": [
-                      "@variables('assigneeId')"
-                    ]
-                  },
-                  "host": {
-                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                    "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
-                    "operationId": "UpdateCard"
-                  },
-                  "authentication": {
-                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                    "type": "Raw"
-                  }
-                },
-                "runtimeConfiguration": {
-                  "staticResult": {
-                    "staticResultOptions": "Enabled",
-                    "name": "Update_a_card0"
-                  }
-                }
-              }
-            },
-            "runAfter": {
-              "Create_card": [
-                "Succeeded"
-              ]
-            },
-            "expression": {
-              "not": {
-                "equals": [
-                  "@variables('assigneeId')",
-                  "@null"
-                ]
-              }
-            },
-            "type": "If"
-          },
-          "If_task_is_completed": {
-            "actions": {
-              "Switch": {
-                "cases": {
-                  "Vladi-1": {
-                    "case": "1108196483313668",
-                    "actions": {
-                      "Move_the_card_to_Done_column_as_Vladi": {
-                        "metadata": {
-                          "operationMetadataId": "d3a774f5-d2a1-4b6c-b26b-f76f58a83544"
+                    "default": {
+                      "actions": {
+                        "Create_a_card_as_Other": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "parameters": {
+                              "columnId": "@variables('columnId')",
+                              "projectId": "@triggerBody()['basecampProjectId']",
+                              "body": "@variables('createTaskBody')"
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                              "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                              "operationId": "CreateCard"
+                            },
+                            "authentication": {
+                              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                              "type": "Raw"
+                            }
+                          },
+                          "runtimeConfiguration": {
+                            "staticResult": {
+                              "staticResultOptions": "Enabled",
+                              "name": "Create_a_card0"
+                            }
+                          }
                         },
+                        "Set_createdCardOrTaskId_Other": {
+                          "runAfter": {
+                            "Create_a_card_as_Other": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "createdCardOrTaskId",
+                            "value": "@body('Create_a_card_as_Other')['id']"
+                          }
+                        }
+                      }
+                    },
+                    "expression": "@items('Tasks')['created_by/gid']",
+                    "type": "Switch"
+                  },
+                  "If_card_is_assigned": {
+                    "actions": {
+                      "Assign_card": {
                         "type": "OpenApiConnection",
                         "inputs": {
                           "parameters": {
                             "cardId": "@variables('createdCardOrTaskId')",
                             "projectId": "@triggerBody()['basecampProjectId']",
-                            "body/column_id": "@triggerBody()['basecampDoneColumnId']"
+                            "body/assignee_ids": [
+                              "@variables('assigneeId')"
+                            ]
                           },
                           "host": {
                             "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
                             "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
-                            "operationId": "MoveCard"
+                            "operationId": "UpdateCard"
                           },
                           "authentication": {
                             "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
@@ -1088,76 +1117,406 @@
                         "runtimeConfiguration": {
                           "staticResult": {
                             "staticResultOptions": "Enabled",
-                            "name": "Move_a_card0"
+                            "name": "Update_a_card0"
                           }
                         }
                       }
-                    }
+                    },
+                    "runAfter": {
+                      "Create_card": [
+                        "Succeeded"
+                      ]
+                    },
+                    "expression": {
+                      "not": {
+                        "equals": [
+                          "@variables('assigneeId')",
+                          "@null"
+                        ]
+                      }
+                    },
+                    "type": "If"
+                  },
+                  "If_card_is_completed": {
+                    "actions": {
+                      "Move_card_to_Done": {
+                        "cases": {
+                          "Move_card_to_Done_as_Vladi": {
+                            "case": "1108196483313668",
+                            "actions": {
+                              "Move_the_card_to_Done_column_as_Vladi": {
+                                "metadata": {
+                                  "operationMetadataId": "d3a774f5-d2a1-4b6c-b26b-f76f58a83544"
+                                },
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "cardId": "@variables('createdCardOrTaskId')",
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "body/column_id": "@triggerBody()['basecampDoneColumnId']"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                    "operationId": "MoveCard"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Enabled",
+                                    "name": "Move_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "default": {
+                          "actions": {
+                            "Move_the_card_to_Done_column_as_Other": {
+                              "metadata": {
+                                "operationMetadataId": "51e58138-ddee-49e3-a589-85f070ea1887"
+                              },
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "parameters": {
+                                  "cardId": "@variables('createdCardOrTaskId')",
+                                  "projectId": "@triggerBody()['basecampProjectId']",
+                                  "body/column_id": "@triggerBody()['basecampDoneColumnId']"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                  "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                                  "operationId": "MoveCard"
+                                },
+                                "authentication": {
+                                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                  "type": "Raw"
+                                }
+                              },
+                              "runtimeConfiguration": {
+                                "staticResult": {
+                                  "staticResultOptions": "Enabled",
+                                  "name": "Move_a_card0"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "expression": "@items('Tasks')['completed_by/gid']",
+                        "metadata": {
+                          "operationMetadataId": "927ece2a-29a4-45a2-8151-215e6736ac6b"
+                        },
+                        "type": "Switch"
+                      }
+                    },
+                    "runAfter": {
+                      "If_card_is_assigned": [
+                        "Succeeded"
+                      ]
+                    },
+                    "else": {
+                      "actions": {}
+                    },
+                    "expression": {
+                      "not": {
+                        "equals": [
+                          "@items('Tasks')?['completed_by']",
+                          "@null"
+                        ]
+                      }
+                    },
+                    "metadata": {
+                      "operationMetadataId": "8475a668-e938-4c10-b427-f4879f261d2e"
+                    },
+                    "type": "If"
                   }
-                },
-                "default": {
-                  "actions": {
-                    "Move_the_card_to_Done_column_as_somebody_else": {
-                      "metadata": {
-                        "operationMetadataId": "51e58138-ddee-49e3-a589-85f070ea1887"
-                      },
-                      "type": "OpenApiConnection",
-                      "inputs": {
-                        "parameters": {
-                          "cardId": "@variables('createdCardOrTaskId')",
-                          "projectId": "@triggerBody()['basecampProjectId']",
-                          "body/column_id": "@triggerBody()['basecampDoneColumnId']"
-                        },
-                        "host": {
-                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                          "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
-                          "operationId": "MoveCard"
-                        },
-                        "authentication": {
-                          "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                          "type": "Raw"
-                        }
-                      },
-                      "runtimeConfiguration": {
-                        "staticResult": {
-                          "staticResultOptions": "Enabled",
-                          "name": "Move_a_card0"
-                        }
+                }
+              },
+              "ToDos": {
+                "case": "ToDos",
+                "actions": {
+                  "Set_Create_todo_body": {
+                    "metadata": {
+                      "operationMetadataId": "44f7410c-0f15-4df3-8b96-503762d1c4c4"
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "createTaskBody",
+                      "value": {
+                        "content": "@variables('taskTitle')",
+                        "description": "@variables('taskContent')",
+                        "notify": false,
+                        "due_on": "@items('Tasks')?['due_on']",
+                        "assignee_ids": [
+                          "@variables('assigneeId')"
+                        ]
                       }
                     }
+                  },
+                  "Create_todo": {
+                    "runAfter": {
+                      "Set_Create_todo_body": [
+                        "Succeeded"
+                      ]
+                    },
+                    "cases": {
+                      "Create_todo_case_Vladi": {
+                        "case": "1108196483313668",
+                        "actions": {
+                          "Create_a_todo_as_Vladi": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "listId": "@triggerBody()['basecampTodoListId']",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                "operationId": "CreateToDo"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Enabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_task_createdCardOrTaskId_Vladi": {
+                            "runAfter": {
+                              "Create_a_todo_as_Vladi": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_todo_as_Vladi')['id']"
+                            }
+                          }
+                        }
+                      },
+                      "Create_todo_case_Alex": {
+                        "case": "33192501926992",
+                        "actions": {
+                          "Create_a_todo_as_Alex": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "listId": "@triggerBody()['basecampTodoListId']",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                "operationId": "CreateToDo"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Enabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_todo_createdCardOrTaskId_Alex": {
+                            "runAfter": {
+                              "Create_a_todo_as_Alex": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_todo_as_Alex')['id']"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "default": {
+                      "actions": {
+                        "Create_a_todo_as_Other": {
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "parameters": {
+                              "listId": "@triggerBody()['basecampTodoListId']",
+                              "projectId": "@triggerBody()['basecampProjectId']",
+                              "body": "@variables('createTaskBody')"
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                              "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                              "operationId": "CreateToDo"
+                            },
+                            "authentication": {
+                              "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                              "type": "Raw"
+                            }
+                          },
+                          "runtimeConfiguration": {
+                            "staticResult": {
+                              "staticResultOptions": "Enabled",
+                              "name": "Create_a_card0"
+                            }
+                          }
+                        },
+                        "Set_todo_createdCardOrTaskId_Other": {
+                          "runAfter": {
+                            "Create_a_todo_as_Other": [
+                              "Succeeded"
+                            ]
+                          },
+                          "type": "SetVariable",
+                          "inputs": {
+                            "name": "createdCardOrTaskId",
+                            "value": "@body('Create_a_todo_as_Other')['id']"
+                          }
+                        }
+                      }
+                    },
+                    "expression": "@items('Tasks')['created_by/gid']",
+                    "type": "Switch"
+                  },
+                  "If_todo_is_completed": {
+                    "actions": {
+                      "CompleteToDo": {
+                        "cases": {
+                          "Complete_todo_as_Vladi": {
+                            "case": "1108196483313668",
+                            "actions": {
+                              "Complete_todo_as_Vladi": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "todoId": "@variables('createdCardOrTaskId')"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                    "operationId": "CompleteToDo"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Enabled",
+                                    "name": "Create_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Complete_todo_as_Alex": {
+                            "case": "33192501926992",
+                            "actions": {
+                              "Complete_todo_as_Alex": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "todoId": "@variables('createdCardOrTaskId')"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                    "operationId": "CompleteToDo"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Enabled",
+                                    "name": "Create_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "default": {
+                          "actions": {
+                            "Complete_todo_as_Other": {
+                              "type": "OpenApiConnection",
+                              "inputs": {
+                                "parameters": {
+                                  "projectId": "@triggerBody()['basecampProjectId']",
+                                  "todoId": "@variables('createdCardOrTaskId')"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                  "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                                  "operationId": "CompleteToDo"
+                                },
+                                "authentication": {
+                                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                  "type": "Raw"
+                                }
+                              },
+                              "runtimeConfiguration": {
+                                "staticResult": {
+                                  "staticResultOptions": "Enabled",
+                                  "name": "Create_a_card0"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "expression": "@items('Tasks')['created_by/gid']",
+                        "type": "Switch"
+                      }
+                    },
+                    "runAfter": {
+                      "Create_todo": [
+                        "Succeeded"
+                      ]
+                    },
+                    "else": {
+                      "actions": {}
+                    },
+                    "expression": {
+                      "not": {
+                        "equals": [
+                          "@items('Tasks')?['completed_by']",
+                          "@null"
+                        ]
+                      }
+                    },
+                    "type": "If"
                   }
-                },
-                "expression": "@items('Tasks')['completed_by/gid']",
-                "metadata": {
-                  "operationMetadataId": "927ece2a-29a4-45a2-8151-215e6736ac6b"
-                },
-                "type": "Switch"
+                }
               }
             },
-            "runAfter": {
-              "If_task_is_assigned": [
-                "Succeeded"
-              ]
-            },
-            "else": {
-              "actions": {}
-            },
-            "expression": {
-              "not": {
-                "equals": [
-                  "@items('Tasks')?['completed_by']",
-                  "@null"
-                ]
-              }
-            },
-            "metadata": {
-              "operationMetadataId": "8475a668-e938-4c10-b427-f4879f261d2e"
-            },
-            "type": "If"
+            "default": {},
+            "expression": "@triggerBody()['create']",
+            "type": "Switch"
           },
           "Get_stories": {
             "runAfter": {
-              "If_task_is_completed": [
+              "Create": [
                 "Succeeded"
               ]
             },
