@@ -30,6 +30,16 @@
       "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241019t000000zc126b29ae9874d6da96b6f79c2254a2b/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
+    },
+    "basecamp_alex": {
+      "connectionName": "shared-basecamp-204--0facf1fb-4f09-4d12-bff7-f2774f0f15a7",
+      "connectionReferenceLogicalName": "ct_BasecampAlex",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Basecamp 4",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241019t000000zc126b29ae9874d6da96b6f79c2254a2b/icon.png",
+      "brandColor": "#fae34c",
+      "tier": "NotSpecified"
     }
   },
   "definition": {
@@ -119,14 +129,14 @@
                 "x-ms-content-hint": "NUMBER"
               },
               "basecampProjectId": {
-                "title": "Basecamp ProjectID",
+                "title": "Basecamp project ID",
                 "type": "number",
                 "x-ms-dynamically-added": true,
                 "description": "Please enter a number",
                 "x-ms-content-hint": "NUMBER"
               },
               "basecampTodoListId": {
-                "title": "Basecamp ProjectID",
+                "title": "Basecamp to-do list ID",
                 "type": "number",
                 "x-ms-dynamically-added": true,
                 "description": "Please enter a number",
@@ -916,7 +926,7 @@
             "type": "SetVariable",
             "inputs": {
               "name": "assigneeId",
-              "value": "@if(equals(items('Tasks')?['assignee'], null), null, if(contains(variable('usersMapping'), items('Tasks')['assignee/gid']), variable('usersMapping')[items('Tasks')['assignee/gid']], variables('defaultUserId')))"
+              "value": "@if(equals(items('Tasks')?['assignee'], null), null, if(contains(variables('usersMapping'), items('Tasks')['assignee/gid']), variables('usersMapping')[items('Tasks')['assignee/gid']], variables('defaultUserId')))"
             }
           },
           "Set_taskContent": {
@@ -986,7 +996,7 @@
                             },
                             "runtimeConfiguration": {
                               "staticResult": {
-                                "staticResultOptions": "Enabled",
+                                "staticResultOptions": "Disabled",
                                 "name": "Create_a_card0"
                               }
                             }
@@ -1018,7 +1028,7 @@
                               },
                               "host": {
                                 "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                                "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                "connectionName": "basecamp_alex",
                                 "operationId": "CreateCard"
                               },
                               "authentication": {
@@ -1028,7 +1038,7 @@
                             },
                             "runtimeConfiguration": {
                               "staticResult": {
-                                "staticResultOptions": "Enabled",
+                                "staticResultOptions": "Disabled",
                                 "name": "Create_a_card0"
                               }
                             }
@@ -1070,7 +1080,7 @@
                           },
                           "runtimeConfiguration": {
                             "staticResult": {
-                              "staticResultOptions": "Enabled",
+                              "staticResultOptions": "Disabled",
                               "name": "Create_a_card0"
                             }
                           }
@@ -1116,7 +1126,7 @@
                         },
                         "runtimeConfiguration": {
                           "staticResult": {
-                            "staticResultOptions": "Enabled",
+                            "staticResultOptions": "Disabled",
                             "name": "Update_a_card0"
                           }
                         }
@@ -1167,7 +1177,7 @@
                                 },
                                 "runtimeConfiguration": {
                                   "staticResult": {
-                                    "staticResultOptions": "Enabled",
+                                    "staticResultOptions": "Disabled",
                                     "name": "Move_a_card0"
                                   }
                                 }
@@ -1200,7 +1210,7 @@
                               },
                               "runtimeConfiguration": {
                                 "staticResult": {
-                                  "staticResultOptions": "Enabled",
+                                  "staticResultOptions": "Disabled",
                                   "name": "Move_a_card0"
                                 }
                               }
@@ -1288,7 +1298,7 @@
                             },
                             "runtimeConfiguration": {
                               "staticResult": {
-                                "staticResultOptions": "Enabled",
+                                "staticResultOptions": "Disabled",
                                 "name": "Create_a_card0"
                               }
                             }
@@ -1320,7 +1330,7 @@
                               },
                               "host": {
                                 "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                                "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                "connectionName": "basecamp_alex",
                                 "operationId": "CreateToDo"
                               },
                               "authentication": {
@@ -1330,7 +1340,7 @@
                             },
                             "runtimeConfiguration": {
                               "staticResult": {
-                                "staticResultOptions": "Enabled",
+                                "staticResultOptions": "Disabled",
                                 "name": "Create_a_card0"
                               }
                             }
@@ -1372,7 +1382,7 @@
                           },
                           "runtimeConfiguration": {
                             "staticResult": {
-                              "staticResultOptions": "Enabled",
+                              "staticResultOptions": "Disabled",
                               "name": "Create_a_card0"
                             }
                           }
@@ -1396,9 +1406,9 @@
                   },
                   "If_todo_is_completed": {
                     "actions": {
-                      "CompleteToDo": {
+                      "Complete_ToDo": {
                         "cases": {
-                          "Complete_todo_as_Vladi": {
+                          "Complete_todo_Vladi": {
                             "case": "1108196483313668",
                             "actions": {
                               "Complete_todo_as_Vladi": {
@@ -1420,14 +1430,14 @@
                                 },
                                 "runtimeConfiguration": {
                                   "staticResult": {
-                                    "staticResultOptions": "Enabled",
+                                    "staticResultOptions": "Disabled",
                                     "name": "Create_a_card0"
                                   }
                                 }
                               }
                             }
                           },
-                          "Complete_todo_as_Alex": {
+                          "Complete_todo_Alex": {
                             "case": "33192501926992",
                             "actions": {
                               "Complete_todo_as_Alex": {
@@ -1439,7 +1449,7 @@
                                   },
                                   "host": {
                                     "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                                    "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                    "connectionName": "basecamp_alex",
                                     "operationId": "CompleteToDo"
                                   },
                                   "authentication": {
@@ -1449,7 +1459,7 @@
                                 },
                                 "runtimeConfiguration": {
                                   "staticResult": {
-                                    "staticResultOptions": "Enabled",
+                                    "staticResultOptions": "Disabled",
                                     "name": "Create_a_card0"
                                   }
                                 }
@@ -1478,7 +1488,7 @@
                               },
                               "runtimeConfiguration": {
                                 "staticResult": {
-                                  "staticResultOptions": "Enabled",
+                                  "staticResultOptions": "Disabled",
                                   "name": "Create_a_card0"
                                 }
                               }
@@ -1599,7 +1609,7 @@
                         },
                         "runtimeConfiguration": {
                           "staticResult": {
-                            "staticResultOptions": "Enabled",
+                            "staticResultOptions": "Disabled",
                             "name": "Create_a_comment0"
                           }
                         }
@@ -1629,7 +1639,7 @@
                       },
                       "runtimeConfiguration": {
                         "staticResult": {
-                          "staticResultOptions": "Enabled",
+                          "staticResultOptions": "Disabled",
                           "name": "Create_a_comment0"
                         }
                       }
