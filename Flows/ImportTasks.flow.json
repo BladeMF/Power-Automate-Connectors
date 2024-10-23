@@ -11,33 +11,33 @@
       "brandColor": "#ffffff",
       "tier": "NotSpecified"
     },
-    "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2": {
+    "basecamp_vladi": {
       "connectionName": "ec67e872d1a543f0909c36aa0b2aa35c",
       "connectionReferenceLogicalName": "ct_BasecampVladi",
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241019t000000zc126b29ae9874d6da96b6f79c2254a2b/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241023t000000z5f64fc9f88aa4bfc851295d981410acd/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     },
-    "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3": {
-      "connectionName": "shared-basecamp-204--0facf1fb-4f09-4d12-bff7-f2774f0f15a7",
-      "connectionReferenceLogicalName": "ct_BasecampVladiPersonal",
+    "basecamp_other": {
+      "connectionName": "ec67e872d1a543f0909c36aa0b2aa35c",
+      "connectionReferenceLogicalName": "ct_BasecampImported",
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241019t000000zc126b29ae9874d6da96b6f79c2254a2b/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241023t000000z5f64fc9f88aa4bfc851295d981410acd/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     },
     "basecamp_alex": {
-      "connectionName": "shared-basecamp-204--0facf1fb-4f09-4d12-bff7-f2774f0f15a7",
+      "connectionName": "ec67e872d1a543f0909c36aa0b2aa35c",
       "connectionReferenceLogicalName": "ct_BasecampAlex",
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241019t000000zc126b29ae9874d6da96b6f79c2254a2b/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241023t000000z5f64fc9f88aa4bfc851295d981410acd/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     }
@@ -507,7 +507,8 @@
           "variables": [
             {
               "name": "defaultUserId",
-              "type": "String"
+              "type": "Integer",
+              "value": 46970549
             }
           ]
         }
@@ -558,7 +559,7 @@
             {
               "name": "assigneeId",
               "type": "String",
-              "value": ""
+              "value": null
             }
           ]
         }
@@ -986,7 +987,7 @@
                               },
                               "host": {
                                 "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                                "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                "connectionName": "basecamp_vladi",
                                 "operationId": "CreateCard"
                               },
                               "authentication": {
@@ -1070,7 +1071,7 @@
                             },
                             "host": {
                               "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                              "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                              "connectionName": "basecamp_other",
                               "operationId": "CreateCard"
                             },
                             "authentication": {
@@ -1111,12 +1112,12 @@
                             "cardId": "@variables('createdCardOrTaskId')",
                             "projectId": "@triggerBody()['basecampProjectId']",
                             "body/assignee_ids": [
-                              "@variables('assigneeId')"
+                              "@if(empty(variables('assigneeId')), null, int(variables('assigneeId')))"
                             ]
                           },
                           "host": {
                             "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                            "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                            "connectionName": "basecamp_vladi",
                             "operationId": "UpdateCard"
                           },
                           "authentication": {
@@ -1167,7 +1168,7 @@
                                   },
                                   "host": {
                                     "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                                    "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                    "connectionName": "basecamp_vladi",
                                     "operationId": "MoveCard"
                                   },
                                   "authentication": {
@@ -1200,7 +1201,7 @@
                                 },
                                 "host": {
                                   "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                                  "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                                  "connectionName": "basecamp_other",
                                   "operationId": "MoveCard"
                                 },
                                 "authentication": {
@@ -1263,7 +1264,7 @@
                         "notify": false,
                         "due_on": "@items('Tasks')?['due_on']",
                         "assignee_ids": [
-                          "@variables('assigneeId')"
+                          "@if(empty(variables('assigneeId')), null, int(variables('assigneeId')))"
                         ]
                       }
                     }
@@ -1288,7 +1289,7 @@
                               },
                               "host": {
                                 "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                                "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                "connectionName": "basecamp_vladi",
                                 "operationId": "CreateToDo"
                               },
                               "authentication": {
@@ -1372,7 +1373,7 @@
                             },
                             "host": {
                               "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                              "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                              "connectionName": "basecamp_other",
                               "operationId": "CreateToDo"
                             },
                             "authentication": {
@@ -1420,7 +1421,7 @@
                                   },
                                   "host": {
                                     "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                                    "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                                    "connectionName": "basecamp_vladi",
                                     "operationId": "CompleteToDo"
                                   },
                                   "authentication": {
@@ -1478,7 +1479,7 @@
                                 },
                                 "host": {
                                   "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                                  "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                                  "connectionName": "basecamp_other",
                                   "operationId": "CompleteToDo"
                                 },
                                 "authentication": {
@@ -1599,7 +1600,7 @@
                           },
                           "host": {
                             "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                            "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_2",
+                            "connectionName": "basecamp_vladi",
                             "operationId": "CreateComment"
                           },
                           "authentication": {
@@ -1629,7 +1630,7 @@
                         },
                         "host": {
                           "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                          "connectionName": "shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4_3",
+                          "connectionName": "basecamp_other",
                           "operationId": "CreateComment"
                         },
                         "authentication": {
