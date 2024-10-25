@@ -89,6 +89,45 @@
     }
   },
   "paths": {
+    "/my/profile.json": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "integer"},
+                "attachable_sgid":{"type": "string"},
+                "name":{"type": "string"},
+                "email_address":{"type": "string"},
+                "personable_type":{"type": "string"},
+                "title":{"type": "string"},
+                "bio":{"type": "string"},
+                "location":{"type": "string"},
+                "created_at":{"type": "string"},
+                "updated_at":{"type": "string"},
+                "admin":{"type": "boolean"},
+                "owner":{"type": "boolean"},
+                "client":{"type": "boolean"},
+                "employee":{"type": "boolean"},
+                "time_zone":{"type": "string"},
+                "avatar_url":{"type": "string"},
+                "company":{"$ref": "#/definitions/ClientCompany"},
+                "can_ping":{"type": "boolean"},
+                "can_manage_projects":{"type": "boolean"},
+                "can_manage_people":{"type": "boolean"},
+                "can_access_timesheet":{"type": "boolean"}
+              }
+            }
+          }
+        },
+        "summary": "Get my personal info",
+        "operationId": "GetMyPersonalInfo",
+        "description": "Will return the current user's personal info.",
+        "parameters": []
+      }
+    },
     "/projects.json": {
       "get": {
         "responses": {
