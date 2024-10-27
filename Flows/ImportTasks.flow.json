@@ -17,7 +17,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241023t000000z5f64fc9f88aa4bfc851295d981410acd/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     },
@@ -27,7 +27,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241023t000000z5f64fc9f88aa4bfc851295d981410acd/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     },
@@ -37,7 +37,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241023t000000z5f64fc9f88aa4bfc851295d981410acd/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     },
@@ -47,7 +47,7 @@
       "source": "Invoker",
       "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
       "displayName": "Basecamp 4",
-      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241023t000000z5f64fc9f88aa4bfc851295d981410acd/icon.png",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
     },
@@ -417,44 +417,101 @@
         },
         "type": "Foreach"
       },
-      "If_section_id_is_set_or_are_we_using_the_project_id": {
+      "Get_tasks": {
         "actions": {
-          "Get_tasks_by_SectionID": {
-            "metadata": {
-              "operationMetadataId": "51bc5857-f3d9-451f-b0e0-c65e711cb923"
-            },
-            "type": "OpenApiConnection",
-            "inputs": {
-              "parameters": {
-                "section": "@triggerBody()?['sectionId']",
-                "limit": "@triggerBody()['taskLimit']",
-                "opt_fields": "@variables('taskFields')"
+          "Get_tasks_with_limit": {
+            "actions": {
+              "Get_tasks_by_SectionID_with_limit": {
+                "metadata": {
+                  "operationMetadataId": "51bc5857-f3d9-451f-b0e0-c65e711cb923"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "section": "@triggerBody()?['sectionId']",
+                    "limit": "@triggerBody()?['taskLimit']",
+                    "opt_fields": "@variables('taskFields')"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                    "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                    "operationId": "GetTasks"
+                  },
+                  "authentication": {
+                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                    "type": "Raw"
+                  }
+                }
               },
-              "host": {
-                "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                "operationId": "GetTasks"
-              },
-              "authentication": {
-                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                "type": "Raw"
+              "Set_tasks_from_SectionID_with_limit": {
+                "runAfter": {
+                  "Get_tasks_by_SectionID_with_limit": [
+                    "Succeeded"
+                  ]
+                },
+                "metadata": {
+                  "operationMetadataId": "166f8d6e-1c9d-48dc-8e92-21c8edc98289"
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "Tasks",
+                  "value": "@outputs('Get_tasks_by_SectionID_with_limit')?['body/value']"
+                }
               }
-            }
-          },
-          "Set_tasks_from_SectionID": {
-            "runAfter": {
-              "Get_tasks_by_SectionID": [
-                "Succeeded"
-              ]
+            },
+            "else": {
+              "actions": {
+                "Get_tasks_by_ProjectID_with_limit": {
+                  "metadata": {
+                    "operationMetadataId": "cb8eed09-f826-4fa1-a18c-9e357fc350f4"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "project": "@triggerBody()?['projectId']",
+                      "limit": "@triggerBody()['taskLimit']",
+                      "opt_fields": "@variables('taskFields')"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                      "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                      "operationId": "GetTasks"
+                    },
+                    "authentication": {
+                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                      "type": "Raw"
+                    }
+                  }
+                },
+                "Set_tasks_from_ProjectID_with_limit": {
+                  "runAfter": {
+                    "Get_tasks_by_ProjectID_with_limit": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "b7c223d0-b8d1-430b-aaff-bf2d5ac5572f"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Tasks",
+                    "value": "@outputs('Get_tasks_by_ProjectID_with_limit')?['body/value']"
+                  }
+                }
+              }
+            },
+            "expression": {
+              "not": {
+                "equals": [
+                  "@triggerBody()?['sectionId']",
+                  "@null"
+                ]
+              }
             },
             "metadata": {
-              "operationMetadataId": "166f8d6e-1c9d-48dc-8e92-21c8edc98289"
+              "operationMetadataId": "1f745390-1c1b-44e1-9ed4-dfa5ec7b95f5"
             },
-            "type": "SetVariable",
-            "inputs": {
-              "name": "Tasks",
-              "value": "@outputs('Get_tasks_by_SectionID')?['body/value']"
-            }
+            "type": "If"
           }
         },
         "runAfter": {
@@ -464,49 +521,95 @@
         },
         "else": {
           "actions": {
-            "Get_tasks_by_ProjectID": {
-              "metadata": {
-                "operationMetadataId": "cb8eed09-f826-4fa1-a18c-9e357fc350f4"
-              },
-              "type": "OpenApiConnection",
-              "inputs": {
-                "parameters": {
-                  "project": "@triggerBody()?['projectId']",
-                  "limit": "@triggerBody()['taskLimit']",
-                  "opt_fields": "@variables('taskFields')"
+            "Get_tasks_without_limit": {
+              "actions": {
+                "Get_tasks_by_SectionID_without_limit": {
+                  "metadata": {
+                    "operationMetadataId": "51bc5857-f3d9-451f-b0e0-c65e711cb923"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "section": "@triggerBody()?['sectionId']",
+                      "opt_fields": "@variables('taskFields')"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                      "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                      "operationId": "GetTasks"
+                    },
+                    "authentication": {
+                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                      "type": "Raw"
+                    }
+                  }
                 },
-                "host": {
-                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                  "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-                  "operationId": "GetTasks"
-                },
-                "authentication": {
-                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
-                  "type": "Raw"
+                "Set_tasks_from_SectionID_without_limit": {
+                  "runAfter": {
+                    "Get_tasks_by_SectionID_without_limit": [
+                      "Succeeded"
+                    ]
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "Tasks",
+                    "value": "@outputs('Get_tasks_by_SectionID_without_limit')?['body/value']"
+                  }
                 }
-              }
-            },
-            "Set_tasks_from_ProjectID": {
-              "runAfter": {
-                "Get_tasks_by_ProjectID": [
-                  "Succeeded"
-                ]
+              },
+              "else": {
+                "actions": {
+                  "Get_tasks_by_ProjectID_without_limit": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "parameters": {
+                        "project": "@triggerBody()?['projectId']",
+                        "opt_fields": "@variables('taskFields')"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                        "connectionName": "shared_asana-202-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                        "operationId": "GetTasks"
+                      },
+                      "authentication": {
+                        "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                        "type": "Raw"
+                      }
+                    }
+                  },
+                  "Set_tasks_from_ProjectID_without_limit": {
+                    "runAfter": {
+                      "Get_tasks_by_ProjectID_without_limit": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "Tasks",
+                      "value": "@outputs('Get_tasks_by_ProjectID_without_limit')?['body/value']"
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "not": {
+                  "equals": [
+                    "@triggerBody()?['sectionId']",
+                    "@null"
+                  ]
+                }
               },
               "metadata": {
-                "operationMetadataId": "b7c223d0-b8d1-430b-aaff-bf2d5ac5572f"
+                "operationMetadataId": "1f745390-1c1b-44e1-9ed4-dfa5ec7b95f5"
               },
-              "type": "SetVariable",
-              "inputs": {
-                "name": "Tasks",
-                "value": "@outputs('Get_tasks_by_ProjectID')?['body/value']"
-              }
+              "type": "If"
             }
           }
         },
         "expression": {
           "not": {
             "equals": [
-              "@triggerBody()?['sectionId']",
+              "@triggerBody()?['taskLimit']",
               "@null"
             ]
           }
@@ -518,7 +621,7 @@
       },
       "Initialise_defaultUserId": {
         "runAfter": {
-          "If_section_id_is_set_or_are_we_using_the_project_id": [
+          "Get_tasks": [
             "Succeeded"
           ]
         },
@@ -959,7 +1062,7 @@
             "type": "SetVariable",
             "inputs": {
               "name": "taskContent",
-              "value": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><a href=\"', items('Tasks')['permalink_url'], '\">View in Asana</a><br/><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Tasks')['created_by/gid']]['ref'] ,')</em></pre>'))"
+              "value": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><a href=\"', items('Tasks')['permalink_url'], '\">View in Asana</a><br/><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB'), if(not(contains(variables('usersMapping'), items('Tasks')['created_by/gid'])), concat(' by ', variables('Users')?[items('Tasks')['created_by/gid']]['ref']), '') ,')</em></pre>'))"
             }
           },
           "Create": {
@@ -1912,7 +2015,7 @@
                 "inputs": {
                   "name": "createCommentBody",
                   "value": {
-                    "content": "@replace(items('Add_comments')['html_text'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Add_comments')['created_at'], 'F', 'en-GB'), ' by ', variables('Users')?[items('Add_comments')['created_by/gid']]['ref'] ,')</em></pre>'))"
+                    "content": "@replace(items('Add_comments')['html_text'], '<body>', concat('<body>', '<pre><em>(originally created at ', formatDateTime(items('Add_comments')['created_at'], 'F', 'en-GB'), if(not(contains(variables('usersMapping'), items('Add_comments')['created_by/gid'])), concat(' by ', variables('Users')?[items('Add_comments')['created_by/gid']]['ref']), '') ,')</em></pre>'))"
                   }
                 }
               },
