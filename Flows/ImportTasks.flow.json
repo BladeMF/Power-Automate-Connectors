@@ -327,9 +327,25 @@
           ]
         }
       },
-      "Initialise_users": {
+      "Initialise_tmpString": {
         "runAfter": {
           "Initialise_tmpArray": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "tmpString",
+              "type": "String"
+            }
+          ]
+        }
+      },
+      "Initialise_users": {
+        "runAfter": {
+          "Initialise_tmpString": [
             "Succeeded"
           ]
         },
@@ -387,6 +403,89 @@
           }
         }
       },
+      "Initialise_mentionSearchStringTemplate": {
+        "runAfter": {
+          "Get_users": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "mentionSearchStringTemplate",
+              "type": "String",
+              "value": "<a href=\"https://app.asana.com/0/profile/{gid1}\" data-asana-gid=\"{gid2}\" data-asana-accessible=\"true\" data-asana-type=\"user\" data-asana-dynamic=\"true\">"
+            }
+          ]
+        }
+      },
+      "Initialise_mentions": {
+        "runAfter": {
+          "Initialise_mentionSearchStringTemplate": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "mentions",
+              "type": "Array",
+              "value": [
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1202404912113645'), '{gid2}', '1202404912090694'), '@Rafail</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyTnpZME9UWTJQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--c3a126e1a7f09ccc2c4fd840132ddced366be325\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1201918551045161'), '{gid2}', '1201918551024388'), '@Vlado</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyTnpZME9UVTRQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--6b09b4b6b111fca1761b4a9807b39b061d907a76\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '33192501927000'), '{gid2}', '33192501926992'), '@Alex</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyTnpZeE5qUTJQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--cb681fe9c5ce30d9f2f850e859dd4902b8896fab\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1108196483313669'), '{gid2}', '1108196483313668'), '@Vladi</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyTnpVNE1qY3dQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--38a2e5ff4ae12b9068172b987aab50cdaf5119cd\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1204779684532715'), '{gid2}', '1165302891579978'), '@Anton Andonov</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyT1RRd05qVTBQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--28d070ed979b2b87874b7aaac389899c00de04dc\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1204779684532715'), '{gid2}', '1165302891579978'), '@Anton</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyT1RRd05qVTBQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--28d070ed979b2b87874b7aaac389899c00de04dc\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1204779688733218'), '{gid2}', '1165302891579994'), '@Elena Dimitrova</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyT1RRd05qVXpQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--1e0b8833168e90f62ffa32ac652c530394d2cfcc\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1204779688733218'), '{gid2}', '1165302891579994'), '@Elena</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyT1RRd05qVXpQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--1e0b8833168e90f62ffa32ac652c530394d2cfcc\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1204780190594323'), '{gid2}', '1204779638040827'), '@Katerina Miteva</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyT1RRd05qVTFQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--911248ea35c8c416fda60a57745932c1e017e2e4\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1204780190594323'), '{gid2}', '1204779638040827'), '@Katerina</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyT1RRd05qVTFQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--911248ea35c8c416fda60a57745932c1e017e2e4\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1206056062017371'), '{gid2}', '1206055494267967'), '@Kristiyana Koycheva</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyT1RRd05qVTJQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--1985c81b8abfe60d600cff4f50f75413c435804c\"></bc-attachment>"
+                },
+                {
+                  "find": "@concat(replace(replace(variables('mentionSearchStringTemplate'), '{gid1}', '1206056062017371'), '{gid2}', '1206055494267967'), '@Kristiyana</a>')",
+                  "replace": "<bc-attachment sgid=\"eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJaWxuYVdRNkx5OWlZek12VUdWeWMyOXVMelEyT1RRd05qVTJQMlY0Y0dseVpYTmZhVzRHT2daRlZBPT0iLCJleHAiOm51bGwsInB1ciI6ImF0dGFjaGFibGUifX0=--1985c81b8abfe60d600cff4f50f75413c435804c\"></bc-attachment>"
+                }
+              ]
+            }
+          ]
+        }
+      },
       "Cache_users": {
         "foreach": "@outputs('Get_users')?['body/data']",
         "actions": {
@@ -411,7 +510,7 @@
           }
         },
         "runAfter": {
-          "Get_users": [
+          "Initialise_mentions": [
             "Succeeded"
           ]
         },
@@ -1065,9 +1164,39 @@
               "value": "@replace(items('Tasks')['html_notes'], '<body>', concat('<body>', '<pre><a href=\"', items('Tasks')['permalink_url'], '\">View in Asana</a><br/><em>(originally created at ', formatDateTime(items('Tasks')['created_at'], 'F', 'en-GB'), if(not(contains(variables('usersMapping'), items('Tasks')['created_by/gid'])), concat(' by ', variables('Users')?[items('Tasks')['created_by/gid']]['ref']), '') ,')</em></pre>'))"
             }
           },
-          "Create": {
+          "Replace_task_mentions": {
+            "foreach": "@variables('mentions')",
+            "actions": {
+              "Replace_task_mention_into_tmp": {
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "tmpString",
+                  "value": "@replace(variables('taskContent'), items('Replace_task_mentions')['find'], items('Replace_task_mentions')['replace'])"
+                }
+              },
+              "Update_taskContent_from_tmp": {
+                "runAfter": {
+                  "Replace_task_mention_into_tmp": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "taskContent",
+                  "value": "@variables('tmpString')"
+                }
+              }
+            },
             "runAfter": {
               "Set_taskContent": [
+                "Succeeded"
+              ]
+            },
+            "type": "Foreach"
+          },
+          "Create": {
+            "runAfter": {
+              "Replace_task_mentions": [
                 "Succeeded"
               ]
             },
@@ -2019,9 +2148,41 @@
                   }
                 }
               },
-              "Post_comments": {
+              "Replace_comment_mentions": {
+                "foreach": "@variables('mentions')",
+                "actions": {
+                  "Replace_comment_mention_into_tmp": {
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "tmpString",
+                      "value": "@replace(variables('createCommentBody')['content'], items('Replace_comment_mentions')['find'], items('Replace_comment_mentions')['replace'])"
+                    }
+                  },
+                  "Update_createCommentBody_from_tmp": {
+                    "runAfter": {
+                      "Replace_comment_mention_into_tmp": [
+                        "Succeeded"
+                      ]
+                    },
+                    "type": "SetVariable",
+                    "inputs": {
+                      "name": "createCommentBody",
+                      "value": {
+                        "content": "@variables('tmpString')"
+                      }
+                    }
+                  }
+                },
                 "runAfter": {
                   "Set_createCommentBody": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Foreach"
+              },
+              "Post_comments": {
+                "runAfter": {
+                  "Replace_comment_mentions": [
                     "Succeeded"
                   ]
                 },
