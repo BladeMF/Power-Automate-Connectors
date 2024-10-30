@@ -60,6 +60,36 @@
       "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
+    },
+    "basecamp_anton": {
+      "connectionName": "4e4eec367d854f23991a083931189002",
+      "connectionReferenceLogicalName": "ct_BasecampAnton",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Basecamp 4",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
+      "brandColor": "#fae34c",
+      "tier": "NotSpecified"
+    },
+    "basecamp_elena": {
+      "connectionName": "cc742f5ff6ec4e8a99fe55f8b6f34aa9",
+      "connectionReferenceLogicalName": "ct_BasecampElena",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Basecamp 4",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
+      "brandColor": "#fae34c",
+      "tier": "NotSpecified"
+    },
+    "basecamp_kristiyana": {
+      "connectionName": "61bdf502e74e4c89bc77a3755d4addd3",
+      "connectionReferenceLogicalName": "ct_BasecampKristiyana",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Basecamp 4",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
+      "brandColor": "#fae34c",
+      "tier": "NotSpecified"
     }
   },
   "definition": {
@@ -1393,6 +1423,132 @@
                             }
                           }
                         }
+                      },
+                      "Create_card_case_Anton": {
+                        "case": "1165302891579978",
+                        "actions": {
+                          "Create_a_card_as_Anton": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "columnId": "@variables('columnId')",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "basecamp_anton",
+                                "operationId": "CreateCard"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Disabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_createdCardOrTaskId_Anton": {
+                            "runAfter": {
+                              "Create_a_card_as_Anton": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_card_as_Anton')['id']"
+                            }
+                          }
+                        }
+                      },
+                      "Create_card_case_Elena": {
+                        "case": "1165302891579994",
+                        "actions": {
+                          "Create_a_card_as_Elena": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "columnId": "@variables('columnId')",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "basecamp_elena",
+                                "operationId": "CreateCard"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Disabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_createdCardOrTaskId_Elena": {
+                            "runAfter": {
+                              "Create_a_card_as_Elena": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_card_as_Elena')['id']"
+                            }
+                          }
+                        }
+                      },
+                      "Create_card_case_Kristiyana": {
+                        "case": "1206055494267967",
+                        "actions": {
+                          "Create_a_card_as_Kristiyana": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "columnId": "@variables('columnId')",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "basecamp_kristiyana",
+                                "operationId": "CreateCard"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Disabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_createdCardOrTaskId_Kristiyana": {
+                            "runAfter": {
+                              "Create_a_card_as_Kristiyana": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_card_as_Kristiyana')['id']"
+                            }
+                          }
+                        }
                       }
                     },
                     "default": {
@@ -1595,6 +1751,96 @@
                                   "host": {
                                     "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
                                     "connectionName": "basecamp_vlado",
+                                    "operationId": "MoveCard"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Disabled",
+                                    "name": "Move_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Move_card_to_Done_as_Anton": {
+                            "case": "1165302891579978",
+                            "actions": {
+                              "Move_the_card_to_Done_column_as_Anton": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "cardId": "@variables('createdCardOrTaskId')",
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "body/column_id": "@triggerBody()['basecampDoneColumnId']"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "basecamp_anton",
+                                    "operationId": "MoveCard"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Disabled",
+                                    "name": "Move_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Move_card_to_Done_as_Elena": {
+                            "case": "1165302891579994",
+                            "actions": {
+                              "Move_the_card_to_Done_column_as_Elena": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "cardId": "@variables('createdCardOrTaskId')",
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "body/column_id": "@triggerBody()['basecampDoneColumnId']"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "basecamp_elena",
+                                    "operationId": "MoveCard"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Disabled",
+                                    "name": "Move_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Move_card_to_Done_as_Kristiyana": {
+                            "case": "1206055494267967",
+                            "actions": {
+                              "Move_the_card_to_Done_column_as_Kristiyana": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "cardId": "@variables('createdCardOrTaskId')",
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "body/column_id": "@triggerBody()['basecampDoneColumnId']"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "basecamp_kristiyana",
                                     "operationId": "MoveCard"
                                   },
                                   "authentication": {
@@ -2291,6 +2537,96 @@
                           "host": {
                             "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
                             "connectionName": "basecamp_vlado",
+                            "operationId": "CreateComment"
+                          },
+                          "authentication": {
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                            "type": "Raw"
+                          }
+                        },
+                        "runtimeConfiguration": {
+                          "staticResult": {
+                            "staticResultOptions": "Disabled",
+                            "name": "Create_a_comment0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Post_comments_as_Anton": {
+                    "case": "1165302891579978",
+                    "actions": {
+                      "Post_comment_as_Anton": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "projectId": "@triggerBody()['basecampProjectId']",
+                            "recordingId": "@variables('createdCardOrTaskId')",
+                            "body": "@variables('createCommentBody')"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                            "connectionName": "basecamp_anton",
+                            "operationId": "CreateComment"
+                          },
+                          "authentication": {
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                            "type": "Raw"
+                          }
+                        },
+                        "runtimeConfiguration": {
+                          "staticResult": {
+                            "staticResultOptions": "Disabled",
+                            "name": "Create_a_comment0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Post_comments_as_Elena": {
+                    "case": "1165302891579994",
+                    "actions": {
+                      "Post_comment_as_Elena": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "projectId": "@triggerBody()['basecampProjectId']",
+                            "recordingId": "@variables('createdCardOrTaskId')",
+                            "body": "@variables('createCommentBody')"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                            "connectionName": "basecamp_elena",
+                            "operationId": "CreateComment"
+                          },
+                          "authentication": {
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                            "type": "Raw"
+                          }
+                        },
+                        "runtimeConfiguration": {
+                          "staticResult": {
+                            "staticResultOptions": "Disabled",
+                            "name": "Create_a_comment0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Post_comments_as_Kristiyana": {
+                    "case": "1206055494267967",
+                    "actions": {
+                      "Post_comment_as_Kristiyana": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "projectId": "@triggerBody()['basecampProjectId']",
+                            "recordingId": "@variables('createdCardOrTaskId')",
+                            "body": "@variables('createCommentBody')"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                            "connectionName": "basecamp_kristiyana",
                             "operationId": "CreateComment"
                           },
                           "authentication": {
