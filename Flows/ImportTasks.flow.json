@@ -90,6 +90,16 @@
       "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
       "brandColor": "#fae34c",
       "tier": "NotSpecified"
+    },
+    "basecamp_katerina": {
+      "connectionName": "d9524081dbb54b19bb188da6610bd10f",
+      "connectionReferenceLogicalName": "ct_BasecampKaterina",
+      "source": "Invoker",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Basecamp 4",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241025t000000z53c7521529724814ac17f9955a276ab4/icon.png",
+      "brandColor": "#fae34c",
+      "tier": "NotSpecified"
     }
   },
   "definition": {
@@ -151,21 +161,21 @@
             "type": "object",
             "properties": {
               "projectId": {
-                "description": "1204598815500662",
+                "description": "The Asana project ID. Specify either this or Section ID.",
                 "title": "Project ID",
                 "type": "string",
                 "x-ms-content-hint": "TEXT",
                 "x-ms-dynamically-added": true
               },
               "sectionId": {
-                "description": "1204598815500664",
+                "description": "The Asana section ID. Specify either this or Project ID.",
                 "title": "Section ID",
                 "type": "string",
                 "x-ms-content-hint": "TEXT",
                 "x-ms-dynamically-added": true
               },
               "workspaceId": {
-                "description": "33192501926998",
+                "description": "The Asna workspace ID.",
                 "title": "Workspace ID",
                 "type": "string",
                 "x-ms-content-hint": "TEXT",
@@ -1008,29 +1018,35 @@
               }
             }
           },
-          "Set_tmpArray": {
+          "Check_subtasks_completed": {
+            "foreach": "@outputs('Get_subtasks')?['body/data']",
+            "actions": {
+              "Set_tmpArray": {
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "tmpArray",
+                  "value": "@variables('tasks')"
+                }
+              },
+              "Append_subtask": {
+                "runAfter": {
+                  "Set_tmpArray": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "tasks",
+                  "value": "@union(variables('tmpArray'), if(and(empty(items('Check_subtasks_completed')['completed_by']), not(empty(items('Collect_subtasks')['completed_by']))), array(setProperty(items('Check_subtasks_completed'), 'completed_by', items('Collect_subtasks')['completed_by'])), json('[]')))"
+                }
+              }
+            },
             "runAfter": {
               "Get_subtasks": [
                 "Succeeded"
               ]
             },
-            "type": "SetVariable",
-            "inputs": {
-              "name": "tmpArray",
-              "value": "@variables('tasks')"
-            }
-          },
-          "Append_subtasks": {
-            "runAfter": {
-              "Set_tmpArray": [
-                "Succeeded"
-              ]
-            },
-            "type": "SetVariable",
-            "inputs": {
-              "name": "tasks",
-              "value": "@union(variables('tmpArray'), outputs('Get_subtasks')?['body/data'])"
-            }
+            "type": "Foreach"
           }
         },
         "runAfter": {
@@ -1549,6 +1565,48 @@
                             }
                           }
                         }
+                      },
+                      "Create_card_case_Katerina": {
+                        "case": "1204779638040827",
+                        "actions": {
+                          "Create_a_card_as_Katerina": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "columnId": "@variables('columnId')",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "basecamp_katerina",
+                                "operationId": "CreateCard"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Disabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_createdCardOrTaskId_Katerina": {
+                            "runAfter": {
+                              "Create_a_card_as_Katerina": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_card_as_Katerina')['id']"
+                            }
+                          }
+                        }
                       }
                     },
                     "default": {
@@ -1856,6 +1914,36 @@
                                 }
                               }
                             }
+                          },
+                          "Move_card_to_Done_as_Katerina": {
+                            "case": "1204779638040827",
+                            "actions": {
+                              "Move_the_card_to_Done_column_as_Katerina": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "cardId": "@variables('createdCardOrTaskId')",
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "body/column_id": "@triggerBody()['basecampDoneColumnId']"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "basecamp_katerina",
+                                    "operationId": "MoveCard"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Disabled",
+                                    "name": "Move_a_card0"
+                                  }
+                                }
+                              }
+                            }
                           }
                         },
                         "default": {
@@ -2115,6 +2203,174 @@
                             }
                           }
                         }
+                      },
+                      "Create_todo_case_Anton": {
+                        "case": "1165302891579978",
+                        "actions": {
+                          "Create_a_todo_as_Anton": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "listId": "@triggerBody()['basecampTodoListId']",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "basecamp_anton",
+                                "operationId": "CreateToDo"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Disabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_todo_createdCardOrTaskId_Anton": {
+                            "runAfter": {
+                              "Create_a_todo_as_Anton": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_todo_as_Anton')['id']"
+                            }
+                          }
+                        }
+                      },
+                      "Create_todo_case_Elena": {
+                        "case": "1165302891579994",
+                        "actions": {
+                          "Create_a_todo_as_Elena": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "listId": "@triggerBody()['basecampTodoListId']",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "basecamp_elena",
+                                "operationId": "CreateToDo"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Disabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_todo_createdCardOrTaskId_Elena": {
+                            "runAfter": {
+                              "Create_a_todo_as_Elena": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_todo_as_Elena')['id']"
+                            }
+                          }
+                        }
+                      },
+                      "Create_todo_case_Katerina": {
+                        "case": "1204779638040827",
+                        "actions": {
+                          "Create_a_todo_as_Katerina": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "listId": "@triggerBody()['basecampTodoListId']",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "basecamp_katerina",
+                                "operationId": "CreateToDo"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Disabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_todo_createdCardOrTaskId_Katerina": {
+                            "runAfter": {
+                              "Create_a_todo_as_Katerina": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_todo_as_Katerina')['id']"
+                            }
+                          }
+                        }
+                      },
+                      "Create_todo_case_Kristiyana": {
+                        "case": "1206055494267967",
+                        "actions": {
+                          "Create_a_todo_as_Kristiyana": {
+                            "type": "OpenApiConnection",
+                            "inputs": {
+                              "parameters": {
+                                "listId": "@triggerBody()['basecampTodoListId']",
+                                "projectId": "@triggerBody()['basecampProjectId']",
+                                "body": "@variables('createTaskBody')"
+                              },
+                              "host": {
+                                "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                "connectionName": "basecamp_kristiyana",
+                                "operationId": "CreateToDo"
+                              },
+                              "authentication": {
+                                "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                "type": "Raw"
+                              }
+                            },
+                            "runtimeConfiguration": {
+                              "staticResult": {
+                                "staticResultOptions": "Disabled",
+                                "name": "Create_a_card0"
+                              }
+                            }
+                          },
+                          "Set_todo_createdCardOrTaskId_Kristiyana": {
+                            "runAfter": {
+                              "Create_a_todo_as_Kristiyana": [
+                                "Succeeded"
+                              ]
+                            },
+                            "type": "SetVariable",
+                            "inputs": {
+                              "name": "createdCardOrTaskId",
+                              "value": "@body('Create_a_todo_as_Kristiyana')['id']"
+                            }
+                          }
+                        }
                       }
                     },
                     "default": {
@@ -2265,6 +2521,122 @@
                                   "host": {
                                     "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
                                     "connectionName": "basecamp_vlado",
+                                    "operationId": "CompleteToDo"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Disabled",
+                                    "name": "Create_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Complete_todo_Anton": {
+                            "case": "1165302891579978",
+                            "actions": {
+                              "Complete_todo_as_Anton": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "todoId": "@variables('createdCardOrTaskId')"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "basecamp_anton",
+                                    "operationId": "CompleteToDo"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Disabled",
+                                    "name": "Create_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Complete_todo_Elena": {
+                            "case": "1165302891579994",
+                            "actions": {
+                              "Complete_todo_as_Elena": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "todoId": "@variables('createdCardOrTaskId')"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "basecamp_elena",
+                                    "operationId": "CompleteToDo"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Disabled",
+                                    "name": "Create_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Complete_todo_Katerina": {
+                            "case": "1204779638040827",
+                            "actions": {
+                              "Complete_todo_as_Katerina": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "todoId": "@variables('createdCardOrTaskId')"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "basecamp_katerina",
+                                    "operationId": "CompleteToDo"
+                                  },
+                                  "authentication": {
+                                    "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                                    "type": "Raw"
+                                  }
+                                },
+                                "runtimeConfiguration": {
+                                  "staticResult": {
+                                    "staticResultOptions": "Disabled",
+                                    "name": "Create_a_card0"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "Complete_todo_Kristiyana": {
+                            "case": "1206055494267967",
+                            "actions": {
+                              "Complete_todo_as_Kristiyana": {
+                                "type": "OpenApiConnection",
+                                "inputs": {
+                                  "parameters": {
+                                    "projectId": "@triggerBody()['basecampProjectId']",
+                                    "todoId": "@variables('createdCardOrTaskId')"
+                                  },
+                                  "host": {
+                                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                                    "connectionName": "basecamp_kristiyana",
                                     "operationId": "CompleteToDo"
                                   },
                                   "authentication": {
@@ -2627,6 +2999,36 @@
                           "host": {
                             "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
                             "connectionName": "basecamp_kristiyana",
+                            "operationId": "CreateComment"
+                          },
+                          "authentication": {
+                            "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']",
+                            "type": "Raw"
+                          }
+                        },
+                        "runtimeConfiguration": {
+                          "staticResult": {
+                            "staticResultOptions": "Disabled",
+                            "name": "Create_a_comment0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Post_comments_as_Katerina": {
+                    "case": "1204779638040827",
+                    "actions": {
+                      "Post_comment_as_Katerina": {
+                        "type": "OpenApiConnection",
+                        "inputs": {
+                          "parameters": {
+                            "projectId": "@triggerBody()['basecampProjectId']",
+                            "recordingId": "@variables('createdCardOrTaskId')",
+                            "body": "@variables('createCommentBody')"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_basecamp-204-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                            "connectionName": "basecamp_katerina",
                             "operationId": "CreateComment"
                           },
                           "authentication": {
