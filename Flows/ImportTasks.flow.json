@@ -175,7 +175,7 @@
                 "x-ms-dynamically-added": true
               },
               "workspaceId": {
-                "description": "The Asna workspace ID.",
+                "description": "The Asana workspace ID.",
                 "title": "Workspace ID",
                 "type": "string",
                 "x-ms-content-hint": "TEXT",
@@ -199,21 +199,21 @@
                 "title": "Basecamp to-do list ID",
                 "type": "number",
                 "x-ms-dynamically-added": true,
-                "description": "Please enter a number",
+                "description": "The target to-do list.",
                 "x-ms-content-hint": "NUMBER"
               },
               "basecampDoneColumnId": {
-                "title": "Basecamp Done Column ID",
+                "title": "Basecamp done column ID",
                 "type": "number",
                 "x-ms-dynamically-added": true,
-                "description": "7832491326",
+                "description": "The ID of the column to move the completed tasks into/",
                 "x-ms-content-hint": "NUMBER"
               },
               "create": {
                 "title": "Create",
                 "type": "string",
                 "x-ms-dynamically-added": true,
-                "description": "Cards",
+                "description": "What to create",
                 "x-ms-content-hint": "TEXT",
                 "enum": [
                   "Cards",
@@ -263,16 +263,17 @@
               "name": "columnsMapping",
               "type": "Object",
               "value": {
-                "1204598815500664": 7832491321,
-                "1204598815500669": 7832501864,
-                "1204598815500668": 7832491320,
-                "1204903371531182": 7832491323,
-                "1204598815500670": 7832491326
+                "1204598815500664": 7934525968,
+                "1204598815500669": 8010997331,
+                "1204598815500668": 7934525967,
+                "1204903371531182": 7934525972,
+                "1204598815500670": 7934525974,
+                "1208663986704176": 7934526752
               }
             }
           ]
         },
-        "description": "Order: Чака Clever -> Чака Clever; Работи се -> Работи се; Backlog -> Not now; Чака ЕРА или външен контрагент -> Чака ЕРА или външен контрагент; Завършена -> Done"
+        "description": "Order: Чака Clever -> Чака Clever; Работи се -> Работи се; Backlog -> Not now; Чака ЕРА или външен контрагент -> Чака ЕРА или външен контрагент; Завършена -> Done; IIS/Cards -> Figuring it out."
       },
       "Initialise_defaultColumnId": {
         "runAfter": {
@@ -289,7 +290,7 @@
             {
               "name": "defaultColumnId",
               "type": "Integer",
-              "value": 7832491319
+              "value": 7934525966
             }
           ]
         }
@@ -1037,7 +1038,7 @@
                 "type": "SetVariable",
                 "inputs": {
                   "name": "tasks",
-                  "value": "@union(variables('tmpArray'), if(and(empty(items('Check_subtasks_completed')['completed_by']), not(empty(items('Collect_subtasks')['completed_by']))), array(setProperty(items('Check_subtasks_completed'), 'completed_by', items('Collect_subtasks')['completed_by'])), json('[]')))"
+                  "value": "@union(variables('tmpArray'), if(and(empty(items('Check_subtasks_completed')?['completed_by']), not(empty(items('Collect_subtasks')?['completed_by']))), array(setProperty(items('Check_subtasks_completed'), 'completed_by', items('Collect_subtasks')['completed_by'])), json('[]')))"
                 }
               }
             },
