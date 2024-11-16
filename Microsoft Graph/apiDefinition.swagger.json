@@ -1,0 +1,342 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Microsoft Graph",
+    "description": "",
+    "version": "1.0"
+  },
+  "host": "graph.microsoft.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/v1.0/me": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "description": "@odata.context"
+                },
+                "businessPhones": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "businessPhones"
+                },
+                "displayName": {
+                  "type": "string",
+                  "description": "displayName"
+                },
+                "givenName": {
+                  "type": "string",
+                  "description": "givenName"
+                },
+                "jobTitle": {
+                  "type": "string",
+                  "description": "jobTitle"
+                },
+                "mail": {
+                  "type": "string",
+                  "description": "mail"
+                },
+                "mobilePhone": {
+                  "type": "string",
+                  "description": "mobilePhone"
+                },
+                "officeLocation": {
+                  "type": "string",
+                  "description": "officeLocation"
+                },
+                "preferredLanguage": {
+                  "type": "string",
+                  "description": "preferredLanguage"
+                },
+                "surname": {
+                  "type": "string",
+                  "description": "surname"
+                },
+                "userPrincipalName": {
+                  "type": "string",
+                  "description": "userPrincipalName"
+                },
+                "id": {
+                  "type": "string",
+                  "description": "id"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Me",
+        "operationId": "Me",
+        "parameters": []
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/createSession": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "description": "@odata.context"
+                },
+                "persistChanges": {
+                  "type": "boolean",
+                  "description": "persistChanges"
+                },
+                "id": {
+                  "type": "string",
+                  "description": "id"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a new workbook session.",
+        "operationId": "CreateSession",
+        "description": "https://learn.microsoft.com/en-us/graph/api/workbook-createsession?view=graph-rest-1.0&tabs=http",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/closeSession": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Use this API to close an existing workbook session.",
+        "operationId": "CloseSession",
+        "description": "https://learn.microsoft.com/en-us/graph/api/workbook-closesession?view=graph-rest-1.0&tabs=http",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "workbook-session-id",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/worksheets/{sheetName}/range(address='{address}')": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "description": "@odata.context"
+                },
+                "@odata.id": {
+                  "type": "string",
+                  "description": "@odata.id"
+                },
+                "@microsoft.graph.tips": {
+                  "type": "string",
+                  "description": "@microsoft.graph.tips"
+                },
+                "address": {
+                  "type": "string",
+                  "description": "address"
+                },
+                "addressLocal": {
+                  "type": "string",
+                  "description": "addressLocal"
+                },
+                "columnCount": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "columnCount"
+                },
+                "cellCount": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "cellCount"
+                },
+                "columnHidden": {
+                  "type": "boolean",
+                  "description": "columnHidden"
+                },
+                "rowHidden": {
+                  "type": "boolean",
+                  "description": "rowHidden"
+                },
+                "numberFormat": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "numberFormat"
+                },
+                "columnIndex": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "columnIndex"
+                },
+                "text": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "text"
+                },
+                "formulas": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "formulas"
+                },
+                "formulasLocal": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "formulasLocal"
+                },
+                "formulasR1C1": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "formulasR1C1"
+                },
+                "hidden": {
+                  "type": "boolean",
+                  "description": "hidden"
+                },
+                "rowCount": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "rowCount"
+                },
+                "rowIndex": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "rowIndex"
+                },
+                "valueTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "valueTypes"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "format": "float"
+                    }
+                  },
+                  "description": "values"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Retrieve the properties and relationships of range object.",
+        "operationId": "GetRange",
+        "description": "https://learn.microsoft.com/en-us/graph/api/range-get?view=graph-rest-1.0&tabs=http",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sheetName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "workbook-session-id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "tokenUrl": "https://login.microsoftonline.com/consumers/oauth2/v2.0/token",
+      "scopes": {
+        "Files.Read Files.ReadWrite user.read mail.read offline_access": "Files.Read Files.ReadWrite user.read mail.read offline_access"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": [
+        "Files.Read Files.ReadWrite user.read mail.read offline_access"
+      ]
+    }
+  ],
+  "tags": []
+}
