@@ -126,7 +126,7 @@
             "schema": {}
           }
         },
-        "summary": "Use this API to close an existing workbook session.",
+        "summary": "Close an existing workbook session.",
         "operationId": "CloseSession",
         "description": "https://learn.microsoft.com/en-us/graph/api/workbook-closesession?view=graph-rest-1.0&tabs=http",
         "parameters": [
@@ -151,141 +151,11 @@
           "default": {
             "description": "default",
             "schema": {
-              "type": "object",
-              "properties": {
-                "@odata.context": {
-                  "type": "string",
-                  "description": "@odata.context"
-                },
-                "@odata.id": {
-                  "type": "string",
-                  "description": "@odata.id"
-                },
-                "@microsoft.graph.tips": {
-                  "type": "string",
-                  "description": "@microsoft.graph.tips"
-                },
-                "address": {
-                  "type": "string",
-                  "description": "address"
-                },
-                "addressLocal": {
-                  "type": "string",
-                  "description": "addressLocal"
-                },
-                "columnCount": {
-                  "type": "integer",
-                  "format": "int32",
-                  "description": "columnCount"
-                },
-                "cellCount": {
-                  "type": "integer",
-                  "format": "int32",
-                  "description": "cellCount"
-                },
-                "columnHidden": {
-                  "type": "boolean",
-                  "description": "columnHidden"
-                },
-                "rowHidden": {
-                  "type": "boolean",
-                  "description": "rowHidden"
-                },
-                "numberFormat": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "description": "numberFormat"
-                },
-                "columnIndex": {
-                  "type": "integer",
-                  "format": "int32",
-                  "description": "columnIndex"
-                },
-                "text": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "description": "text"
-                },
-                "formulas": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "description": "formulas"
-                },
-                "formulasLocal": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "description": "formulasLocal"
-                },
-                "formulasR1C1": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "description": "formulasR1C1"
-                },
-                "hidden": {
-                  "type": "boolean",
-                  "description": "hidden"
-                },
-                "rowCount": {
-                  "type": "integer",
-                  "format": "int32",
-                  "description": "rowCount"
-                },
-                "rowIndex": {
-                  "type": "integer",
-                  "format": "int32",
-                  "description": "rowIndex"
-                },
-                "valueTypes": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "description": "valueTypes"
-                },
-                "values": {
-                  "type": "array",
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "number",
-                      "format": "float"
-                    }
-                  },
-                  "description": "values"
-                }
-              }
+              "$ref": "#/definitions/Range"
             }
           }
         },
-        "summary": "Retrieve the properties and relationships of range object.",
+        "summary": "Retrieve the properties and relationships of range object",
         "operationId": "GetRange",
         "description": "https://learn.microsoft.com/en-us/graph/api/range-get?view=graph-rest-1.0&tabs=http",
         "parameters": [
@@ -312,23 +182,752 @@
             "in": "header",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/rows/add": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "description": "@odata.context"
+                },
+                "@odata.id": {
+                  "type": "string",
+                  "description": "@odata.id"
+                },
+                "index": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "index"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "description": "values"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Add a row in a table",
+        "operationId": "AddTableRow",
+        "description": "https://learn.microsoft.com/en-us/graph/api/tablerowcollection-add?view=graph-rest-1.0&tabs=http",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Workbook-Session-Id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "values": {
+                  "type": "array",
+                  "items": {},
+                  "description": "values"
+                }
+              },
+              "x-ms-visibility": "important"
+            },
+            "x-ms-visibility": "important"
+          }
+        ]
+      }
+    },
+    "/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/headerRowRange": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/Range"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Workbook-Session-Id:{Workbook-Session-Id}",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "summary": "Get the range object associated with header row of the table",
+        "operationId": "GetTableHeaderRowRange",
+        "description": "https://learn.microsoft.com/en-us/graph/api/table-headerrowrange?view=graph-rest-1.0&tabs=http"
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/dataBodyRange": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/Range"
+            }
+          }
+        },
+        "summary": "Get the range object associated with the data body of the table",
+        "description": "https://learn.microsoft.com/en-us/graph/api/table-databodyrange?view=graph-rest-1.0&tabs=http",
+        "operationId": "GetTableDataBodyRange",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Workbook-Session-Id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/rows": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "description": "@odata.context"
+                },
+                "@microsoft.graph.tips": {
+                  "type": "string",
+                  "description": "@microsoft.graph.tips"
+                },
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "@odata.id": {
+                        "type": "string",
+                        "description": "@odata.id"
+                      },
+                      "index": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "index"
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "description": "values"
+                      }
+                    }
+                  },
+                  "description": "value"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get the rows in a table",
+        "operationId": "GetTableRows",
+        "description": "https://learn.microsoft.com/en-us/graph/api/table-list-rows?view=graph-rest-1.0&tabs=http",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Workbook-Session-Id:{Workbook-Session-Id}",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/rows/itemAt(index={index})": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "description": "@odata.context"
+                },
+                "@odata.id": {
+                  "type": "string",
+                  "description": "@odata.id"
+                },
+                "@microsoft.graph.tips": {
+                  "type": "string",
+                  "description": "@microsoft.graph.tips"
+                },
+                "index": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "index"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "values"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "GetTableRow",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "Workbook-Session-Id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "summary": "Get a row based on its position in the collection",
+        "description": "https://learn.microsoft.com/en-us/graph/api/tablerowcollection-itemat?view=graph-rest-1.0&tabs=http"
+      },
+      "delete": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Delete a row from the table",
+        "operationId": "DeleteTableRow",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Workbook-Session-Id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "description": "https://learn.microsoft.com/en-us/graph/api/tablerow-delete?view=graph-rest-1.0&tabs=http"
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/columns/{nameOrIndex}": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "description": "@odata.context"
+                },
+                "@odata.id": {
+                  "type": "string",
+                  "description": "@odata.id"
+                },
+                "@microsoft.graph.tips": {
+                  "type": "string",
+                  "description": "@microsoft.graph.tips"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "values"
+                },
+                "id": {
+                  "type": "string",
+                  "description": "id"
+                },
+                "index": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "index"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "name"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "GetTableColumn",
+        "summary": "Get a table column",
+        "description": "https://learn.microsoft.com/en-us/graph/api/tablecolumn-get?view=graph-rest-1.0&tabs=http",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "nameOrIndex",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Workbook-Session-Id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/columns/{nameOrId}/dataBodyRange": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "$ref": "#/definitions/Range"
+            }
+          }
+        },
+        "operationId": "GetTableColumnDataBodyRange",
+        "summary": "Get the range object associated with the data body of the column",
+        "description": "https://learn.microsoft.com/en-us/graph/api/tablecolumn-databodyrange?view=graph-rest-1.0&tabs=http",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "nameOrId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Workbook-Session-Id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/worksheets/{worksheetName}/pivotTables/{tableName}/refresh": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "operationId": "RefreshPivotTable",
+        "summary": "Refresh a PivotTable",
+        "description": "https://learn.microsoft.com/en-us/graph/api/workbookpivottable-refresh?view=graph-rest-1.0&tabs=http",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "worksheetName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Workbook-Session-Id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/columns": {
+      "get": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "@odata.context": {
+                  "type": "string",
+                  "description": "@odata.context"
+                },
+                "@microsoft.graph.tips": {
+                  "type": "string",
+                  "description": "@microsoft.graph.tips"
+                },
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "@odata.id": {
+                        "type": "string",
+                        "description": "@odata.id"
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "description": "values"
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "id"
+                      },
+                      "index": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "index"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name"
+                      }
+                    }
+                  },
+                  "description": "value"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "GetTableColumns",
+        "summary": "Retrieve a list of columns in a table",
+        "description": "https://learn.microsoft.com/en-us/graph/api/tablecolumn-list?view=graph-rest-1.0&tabs=http",
+        "parameters": [
+          {
+            "name": "documentPath",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Workbook-Session-Id",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ]
       }
     }
   },
-  "definitions": {},
+  "definitions": {
+    "Range": {
+      "type": "object",
+      "properties": {
+        "@odata.context": {
+          "type": "string",
+          "description": "@odata.context"
+        },
+        "@odata.id": {
+          "type": "string",
+          "description": "@odata.id"
+        },
+        "@microsoft.graph.tips": {
+          "type": "string",
+          "description": "@microsoft.graph.tips"
+        },
+        "address": {
+          "type": "string",
+          "description": "address"
+        },
+        "addressLocal": {
+          "type": "string",
+          "description": "addressLocal"
+        },
+        "columnCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "columnCount"
+        },
+        "cellCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "cellCount"
+        },
+        "columnHidden": {
+          "type": "boolean",
+          "description": "columnHidden"
+        },
+        "rowHidden": {
+          "type": "boolean",
+          "description": "rowHidden"
+        },
+        "numberFormat": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "numberFormat"
+        },
+        "columnIndex": {
+          "type": "integer",
+          "format": "int32",
+          "description": "columnIndex"
+        },
+        "text": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "text"
+        },
+        "formulas": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "formulas"
+        },
+        "formulasLocal": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "formulasLocal"
+        },
+        "formulasR1C1": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "formulasR1C1"
+        },
+        "hidden": {
+          "type": "boolean",
+          "description": "hidden"
+        },
+        "rowCount": {
+          "type": "integer",
+          "format": "int32",
+          "description": "rowCount"
+        },
+        "rowIndex": {
+          "type": "integer",
+          "format": "int32",
+          "description": "rowIndex"
+        },
+        "valueTypes": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "valueTypes"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "description": "values"
+        }
+      }
+    }
+  },
   "parameters": {},
   "responses": {},
   "securityDefinitions": {
     "oauth2-auth": {
       "type": "oauth2",
       "flow": "accessCode",
-      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
-      "tokenUrl": "https://login.microsoftonline.com/consumers/oauth2/v2.0/token",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
       "scopes": {
         "Files.Read Files.ReadWrite user.read mail.read offline_access": "Files.Read Files.ReadWrite user.read mail.read offline_access"
-      }
+      },
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize"
     }
   },
   "security": [

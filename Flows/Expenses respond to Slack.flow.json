@@ -1,0 +1,909 @@
+{
+  "$schema": "https://power-automate-tools.local/flow-editor.json#",
+  "connectionReferences": {
+    "shared_custom-20operations-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4": {
+      "connectionName": "b066d21a-b47a-4a98-812c-4b61fec026d5",
+      "source": "Embedded",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_custom-20operations-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Custom operations",
+      "iconUri": "https://defaulticons.powerapps.com/defaulticons/api-dedicated.png",
+      "brandColor": "#007ee5",
+      "tier": "NotSpecified",
+      "apiName": "custom-20operations-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4"
+    },
+    "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4": {
+      "connectionName": "shared-microsoft-20g-e8c836c6-b65b-4ec5-a9b3-c95d671c7d44",
+      "source": "Embedded",
+      "id": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+      "displayName": "Microsoft Graph",
+      "iconUri": "https://prodapiicons.cdn.powerappscdn.net/20241115t000000z56fad54bf02d4e2cbdf5cc331767e07f/customconnectoricon.png",
+      "brandColor": "#ffffff",
+      "tier": "NotSpecified",
+      "apiName": "microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4"
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "metadata": {},
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "triggerAuthenticationType": "All"
+        }
+      }
+    },
+    "actions": {
+      "Check_if_it_is_a_URL_verification_request": {
+        "actions": {
+          "Terminate": {
+            "type": "Terminate",
+            "inputs": {
+              "runStatus": "Succeeded"
+            }
+          }
+        },
+        "runAfter": {
+          "Respond_with_the_challenge_if_present": [
+            "Succeeded",
+            "Skipped",
+            "TimedOut",
+            "Failed"
+          ]
+        },
+        "else": {
+          "actions": {
+            "If_the_message_is_of_subtype_\"bot_message\"": {
+              "actions": {
+                "Terminate_1": {
+                  "type": "Terminate",
+                  "inputs": {
+                    "runStatus": "Succeeded"
+                  }
+                }
+              },
+              "else": {
+                "actions": {}
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@triggerBody()?['event/subtype']",
+                      "bot_message"
+                    ]
+                  }
+                ]
+              },
+              "type": "If"
+            }
+          }
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@triggerBody()?['type']",
+                "url_verification"
+              ]
+            }
+          ]
+        },
+        "type": "If"
+      },
+      "Reply_to_message": {
+        "runAfter": {
+          "Close_file": [
+            "Succeeded"
+          ]
+        },
+        "type": "Http",
+        "inputs": {
+          "uri": "https://hooks.slack.com/services/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",
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": {
+            "channel": "C0824MPLLHF",
+            "blocks": "@json(concat('[', join(variables('sections'), ','), ']'))"
+          }
+        },
+        "runtimeConfiguration": {
+          "contentTransfer": {
+            "transferMode": "Chunked"
+          }
+        }
+      },
+      "Respond_with_the_challenge_if_present": {
+        "runAfter": {
+          "Initialize_tableName": [
+            "Succeeded"
+          ]
+        },
+        "type": "Response",
+        "kind": "Http",
+        "inputs": {
+          "statusCode": 200,
+          "body": "@triggerBody()?['challenge']"
+        }
+      },
+      "Call_parser": {
+        "runAfter": {
+          "If_is_edit,_delete_old_rows": [
+            "Succeeded",
+            "Failed"
+          ]
+        },
+        "type": "Http",
+        "inputs": {
+          "uri": "https://evil-finances.azurewebsites.net/api/ParseSlackExpenseMessage",
+          "method": "GET",
+          "headers": {
+            "x-functions-key": ""
+          },
+          "queries": {
+            "text": "@{variables('messageText')}",
+            "time": "@{variables('eventTs')}"
+          }
+        },
+        "runtimeConfiguration": {
+          "contentTransfer": {
+            "transferMode": "Chunked"
+          }
+        }
+      },
+      "Reply_with_failure": {
+        "runAfter": {
+          "Call_parser": [
+            "Failed"
+          ]
+        },
+        "type": "Http",
+        "inputs": {
+          "uri": "https://hooks.slack.com/services/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",
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": {
+            "channel": "@{triggerBody()?['event/channel']}",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "🤯 Греда: (@{outputs('Call_parser')?['statusCode']}) @{body('Call_parser')}"
+                }
+              }
+            ]
+          }
+        },
+        "runtimeConfiguration": {
+          "contentTransfer": {
+            "transferMode": "Chunked"
+          }
+        }
+      },
+      "Reply_to_with_timeout": {
+        "runAfter": {
+          "Call_parser": [
+            "TimedOut"
+          ]
+        },
+        "type": "Http",
+        "inputs": {
+          "uri": "https://hooks.slack.com/services/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",
+          "method": "POST",
+          "headers": {
+            "content-type": "application/json"
+          },
+          "body": {
+            "channel": "@{triggerBody()?['event/channel']}",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "⌛ Нещо не се получи връзката. Пробвай пак след малко."
+                }
+              }
+            ]
+          }
+        },
+        "runtimeConfiguration": {
+          "contentTransfer": {
+            "transferMode": "Chunked"
+          }
+        }
+      },
+      "Process_results": {
+        "foreach": "@body('Call_parser')",
+        "actions": {
+          "If_result_is_successfully_parsed": {
+            "actions": {
+              "Append_description": {
+                "runAfter": {
+                  "Append_amount_header": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "sections",
+                  "value": {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "@{item()['item/description']}"
+                    }
+                  }
+                }
+              },
+              "Append_other_properties_block": {
+                "runAfter": {
+                  "Append_description": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "sections",
+                  "value": {
+                    "type": "context",
+                    "elements": [
+                      {
+                        "type": "mrkdwn",
+                        "text": "📆 @{formatDateTime(item()['item/date'], 'dd.MM.yyyy')}"
+                      },
+                      {
+                        "type": "mrkdwn",
+                        "text": "`Категория`  @{if(empty(item()['item/category']),'-', item()['item/category'])}"
+                      },
+                      {
+                        "type": "mrkdwn",
+                        "text": "`Код`  @{if(empty(item()['item/code']), '-', item()['item/code'])}"
+                      }
+                    ]
+                  }
+                }
+              },
+              "Разлика_с_1900": {
+                "runAfter": {
+                  "Append_other_properties_block": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": "@dateDifference('1899-12-30T00:00:00.0',items('Process_results')['item/date'])",
+                "description": "Махаме един ден заради това, че 0 = 1900-01-00, и още един ден, заради това, че Excel погрешно смята 1900 за високосна година"
+              },
+              "Row_with_named_columns": {
+                "runAfter": {
+                  "Разлика_с_1900": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Compose",
+                "inputs": {
+                  "Категория": "@items('Process_results')['item/category']",
+                  "Код": "@items('Process_results')['item/code']",
+                  "Разход": "@items('Process_results')['item/description']",
+                  "Сума": "@items('Process_results')['item/amount']",
+                  "Дата": "@substring(outputs('Разлика_с_1900'), 0, indexOf(outputs('Разлика_с_1900'), '.'))",
+                  "Message Id": "@concat('''', variables('eventTs'))"
+                }
+              },
+              "Row_with_indexed_columns": {
+                "runAfter": {
+                  "Row_with_named_columns": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "body/columns": "@body('Get_table_columns')",
+                    "body/values": "@outputs('Row_with_named_columns')"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_custom-20operations-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                    "connectionName": "shared_custom-20operations-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                    "operationId": "AlignValuesToColumns"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              },
+              "Append_amount_header": {
+                "type": "AppendToArrayVariable",
+                "inputs": {
+                  "name": "sections",
+                  "value": {
+                    "type": "header",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "@{item()['item/amount']} лв."
+                    }
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {
+                "Append_failed_string": {
+                  "type": "AppendToArrayVariable",
+                  "inputs": {
+                    "name": "sections",
+                    "value": {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "⁉️ Това не го разбрах: `@{item()['failedString']}`"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "expression": {
+              "and": [
+                {
+                  "equals": [
+                    "@item()['success']",
+                    "@true"
+                  ]
+                }
+              ]
+            },
+            "type": "If"
+          },
+          "Append_divider": {
+            "runAfter": {
+              "If_result_is_successfully_parsed": [
+                "Succeeded"
+              ]
+            },
+            "type": "AppendToArrayVariable",
+            "inputs": {
+              "name": "sections",
+              "value": {
+                "type": "divider"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Initialize_row": [
+            "Succeeded"
+          ]
+        },
+        "type": "Foreach"
+      },
+      "Initialize_sections": {
+        "runAfter": {
+          "Call_parser": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "sections",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Initialize_isEdit": {
+        "runAfter": {},
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "isEdit",
+              "type": "boolean",
+              "value": "@equals(triggerBody()?['event/subtype'], 'message_changed')"
+            }
+          ]
+        }
+      },
+      "Initialize_messageText": {
+        "runAfter": {
+          "Check_if_it_is_a_URL_verification_request": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "messageText",
+              "type": "string",
+              "value": "@triggerBody()?[concat('event/', if(variables('isEdit'), 'message/', ''), 'blocks')]?[0]?['elements']?[0]?['elements']?[0]?['text']"
+            }
+          ]
+        }
+      },
+      "Initialize_eventTs": {
+        "runAfter": {
+          "Initialize_messageText": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "eventTs",
+              "type": "string",
+              "value": "@triggerBody()?[concat('event/', if(variables('isEdit'), 'message/', ''),'ts')]"
+            }
+          ]
+        }
+      },
+      "If_is_edit,_delete_old_rows": {
+        "actions": {
+          "Get_MessageId_data_range": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "documentPath": "@variables('documentPath')",
+                "tableName": "@variables('tableName')",
+                "nameOrId": "Message Id",
+                "$select": "values",
+                "Workbook-Session-Id": "@outputs('Open_file')?['body/id']"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "GetTableColumnDataBodyRange"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Find_within_range": {
+            "runAfter": {
+              "Get_MessageId_data_range": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "body/search": "@variables('eventTs')",
+                "body/range": "@body('Get_MessageId_data_range')"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_custom-20operations-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_custom-20operations-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "FindWithinRange"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Apply_to_each": {
+            "foreach": "@body('Find_within_range')",
+            "actions": {
+              "Delete_found_row": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "parameters": {
+                    "documentPath": "@variables('documentPath')",
+                    "tableName": "@variables('tableName')",
+                    "index": "@item()",
+                    "Workbook-Session-Id": "@outputs('Open_file')?['body/id']"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                    "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                    "operationId": "DeleteTableRow"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            },
+            "runAfter": {
+              "Find_within_range": [
+                "Succeeded"
+              ]
+            },
+            "type": "Foreach"
+          }
+        },
+        "runAfter": {
+          "Initialize_deleteSucceeded": [
+            "Succeeded"
+          ]
+        },
+        "else": {
+          "actions": {}
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@variables('isEdit')",
+                "@true"
+              ]
+            }
+          ]
+        },
+        "type": "If"
+      },
+      "Initialize_deleteSucceeded": {
+        "runAfter": {
+          "Initialize_index": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "deleteSucceeded",
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        }
+      },
+      "Initialize_documentPath": {
+        "runAfter": {
+          "Initialize_isEdit": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "documentPath",
+              "type": "string",
+              "value": "Documents/Разходи/Разходи.xlsx"
+            }
+          ]
+        }
+      },
+      "Initialize_tableName": {
+        "runAfter": {
+          "Initialize_documentPath": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "tableName",
+              "type": "string",
+              "value": "Разходи"
+            }
+          ]
+        }
+      },
+      "Open_file": {
+        "runAfter": {
+          "Me": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "documentPath": "@variables('documentPath')"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "operationId": "CreateSession"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "Get_table_columns": {
+        "runAfter": {
+          "Open_file": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "documentPath": "@variables('documentPath')",
+            "tableName": "@variables('tableName')",
+            "Workbook-Session-Id": "@outputs('Open_file')?['body/id']",
+            "$select": "name"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "operationId": "GetTableColumns"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "Initialize_index": {
+        "runAfter": {
+          "Get_table_columns": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "index",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        }
+      },
+      "Initialize_rows": {
+        "runAfter": {
+          "Initialize_sections": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "rows",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "Initialize_row": {
+        "runAfter": {
+          "Initialize_rows": [
+            "Succeeded"
+          ]
+        },
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "row",
+              "type": "array",
+              "value": []
+            }
+          ]
+        }
+      },
+      "If_any_results": {
+        "actions": {
+          "Collect_rows": {
+            "type": "Compose",
+            "inputs": "@body('Row_with_indexed_columns')"
+          },
+          "Add_rows_to_Разходи": {
+            "runAfter": {
+              "Collect_rows": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "documentPath": "@variables('documentPath')",
+                "tableName": "@variables('tableName')",
+                "body/values": "@outputs('Collect_rows')",
+                "Workbook-Session-Id": "@outputs('Open_file')?['body/id']"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "AddTableRow"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Refresh_a_PivotTable": {
+            "runAfter": {
+              "Add_rows_to_Разходи": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "documentPath": "@variables('documentPath')",
+                "worksheetName": "Справка",
+                "tableName": "Справка",
+                "Workbook-Session-Id": "@outputs('Open_file')?['body/id']"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "RefreshPivotTable"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Get_remaining_for_food": {
+            "runAfter": {
+              "Refresh_a_PivotTable": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "documentPath": "@variables('documentPath')",
+                "sheetName": "Справка",
+                "address": "Оставащи_за_храна",
+                "workbook-session-id": "@outputs('Open_file')?['body/id']",
+                "$select": "text"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "GetRange"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Get_remaining_for_dailies": {
+            "runAfter": {
+              "Get_remaining_for_food": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "documentPath": "@variables('documentPath')",
+                "sheetName": "Справка",
+                "address": "Оставащи_за_кеф",
+                "workbook-session-id": "@outputs('Open_file')?['body/id']",
+                "$select": "text"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "GetRange"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Get_target_date": {
+            "runAfter": {
+              "Get_remaining_for_dailies": [
+                "Succeeded"
+              ]
+            },
+            "type": "OpenApiConnection",
+            "inputs": {
+              "parameters": {
+                "documentPath": "@variables('documentPath')",
+                "sheetName": "Справка",
+                "address": "Към_дата",
+                "workbook-session-id": "@outputs('Open_file')?['body/id']",
+                "$select": "text"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+                "operationId": "GetRange"
+              },
+              "authentication": "@parameters('$authentication')"
+            }
+          },
+          "Append_remaining": {
+            "runAfter": {
+              "Get_target_date": [
+                "Succeeded"
+              ]
+            },
+            "type": "AppendToArrayVariable",
+            "inputs": {
+              "name": "sections",
+              "value": {
+                "type": "context",
+                "elements": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "_Остават_:"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "🥖 *@{trim(outputs('Get_remaining_for_food')?['body/text'][0][0])}*"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "💃 *@{trim(outputs('Get_remaining_for_dailies')?['body/text'][0][0])}*"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "🗓️  @{formatDateTime(outputs('Get_target_date')?['body/text'][0][0], 'dd.MM.yyyy')}"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Process_results": [
+            "Succeeded"
+          ]
+        },
+        "else": {
+          "actions": {}
+        },
+        "expression": {
+          "and": [
+            {
+              "greater": [
+                "@length(body('Row_with_indexed_columns'))",
+                0
+              ]
+            },
+            {
+              "not": {
+                "equals": [
+                  "@body('Row_with_indexed_columns')[0]",
+                  "@null"
+                ]
+              }
+            }
+          ]
+        },
+        "type": "If"
+      },
+      "Close_file": {
+        "runAfter": {
+          "If_any_results": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "parameters": {
+            "documentPath": "@variables('documentPath')",
+            "workbook-session-id": "@outputs('Open_file')?['body/id']"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "operationId": "CloseSession"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      },
+      "Me": {
+        "runAfter": {
+          "Initialize_eventTs": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "connectionName": "shared_microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+            "operationId": "Me"
+          },
+          "authentication": "@parameters('$authentication')"
+        }
+      }
+    },
+    "outputs": {}
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Custom operations",
+    "description": "",
+    "version": "1.0"
+  },
+  "host": "api.example.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/find-within-range": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {
+              "type": "array",
+              "title": "Inices of matching rows",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "summary": "Find within range",
+        "description": "Finds the given text within an Excel range",
+        "operationId": "FindWithinRange",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "search": {
+                  "type": "string",
+                  "description": "search",
+                  "title": "",
+                  "x-ms-visibility": "important"
+                },
+                "range": {
+                  "type": "object",
+                  "description": "The 1-dimentional Excel range to search",
+                  "x-ms-visibility": "important"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/order-values-to-columns": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default"
+          }
+        },
+        "summary": "Align values to columns",
+        "description": "Returns an indexed array with the values in the order of the columns",
+        "operationId": "AlignValuesToColumns",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "columns": {
+                  "type": "object",
+                  "description": "The response of Excel table columns request",
+                  "x-ms-visibility": "important"
+                },
+                "values": {
+                  "type": "object",
+                  "description": "values",
+                  "x-ms-visibility": "important"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {},
+  "security": [],
+  "tags": []
+}

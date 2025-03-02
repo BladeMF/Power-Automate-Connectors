@@ -17,6 +17,12 @@
 		},
 		{
 			"path": "Microsoft Graph"
+		},
+		{
+			"path": "PowerAutomateScript"
+		},
+		{
+			"path": "Custom operations"
 		}
 	],
 	"settings": {
