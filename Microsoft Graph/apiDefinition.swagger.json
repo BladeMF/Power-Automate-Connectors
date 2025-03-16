@@ -81,7 +81,7 @@
         "parameters": []
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/createSession": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/createSession": {
       "post": {
         "responses": {
           "default": {
@@ -118,7 +118,7 @@
         ]
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/closeSession": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/closeSession": {
       "post": {
         "responses": {
           "default": {
@@ -145,7 +145,7 @@
         ]
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/worksheets/{sheetName}/range(address='{address}')": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/worksheets/{sheetName}/range(address='{address}')": {
       "get": {
         "responses": {
           "default": {
@@ -192,7 +192,7 @@
         ]
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/rows/add": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/rows/add": {
       "post": {
         "responses": {
           "default": {
@@ -267,7 +267,7 @@
         ]
       }
     },
-    "/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/headerRowRange": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/headerRowRange": {
       "get": {
         "responses": {
           "default": {
@@ -308,7 +308,7 @@
         "description": "https://learn.microsoft.com/en-us/graph/api/table-headerrowrange?view=graph-rest-1.0&tabs=http"
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/dataBodyRange": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/dataBodyRange": {
       "get": {
         "responses": {
           "default": {
@@ -349,7 +349,7 @@
         ]
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/rows": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/rows": {
       "get": {
         "responses": {
           "default": {
@@ -422,7 +422,7 @@
         ]
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/rows/itemAt(index={index})": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/rows/itemAt(index={index})": {
       "get": {
         "responses": {
           "default": {
@@ -530,7 +530,7 @@
         "description": "https://learn.microsoft.com/en-us/graph/api/tablerow-delete?view=graph-rest-1.0&tabs=http"
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/columns/{nameOrIndex}": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/columns/{nameOrIndex}": {
       "get": {
         "responses": {
           "default": {
@@ -608,7 +608,7 @@
         ]
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/columns/{nameOrId}/dataBodyRange": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/columns/{nameOrId}/dataBodyRange": {
       "get": {
         "responses": {
           "default": {
@@ -655,7 +655,7 @@
         ]
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/worksheets/{worksheetName}/pivotTables/{tableName}/refresh": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/worksheets/{worksheetName}/pivotTables/{tableName}/refresh": {
       "post": {
         "responses": {
           "default": {
@@ -694,7 +694,7 @@
         ]
       }
     },
-    "/v1.0/drive/root:/{documentPath}:/workbook/tables/{tableName}/columns": {
+    "/v1.0/me/drive/root:/{documentPath}:/workbook/tables/{tableName}/columns": {
       "get": {
         "responses": {
           "default": {
@@ -908,8 +908,7 @@
           "items": {
             "type": "array",
             "items": {
-              "type": "number",
-              "format": "float"
+              "type": "string"
             }
           },
           "description": "values"
@@ -925,7 +924,7 @@
       "flow": "accessCode",
       "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
       "scopes": {
-        "Files.Read Files.ReadWrite user.read mail.read offline_access": "Files.Read Files.ReadWrite user.read mail.read offline_access"
+        "Files.Read Files.Read.All Files.ReadWrite Files.ReadWrite.All user.read mail.read offline_access": "Files.Read Files.Read.All Files.ReadWrite Files.ReadWrite.All user.read mail.read offline_access"
       },
       "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize"
     }
@@ -933,7 +932,7 @@
   "security": [
     {
       "oauth2-auth": [
-        "Files.Read Files.ReadWrite user.read mail.read offline_access"
+        "Files.Read Files.Read.All Files.ReadWrite Files.ReadWrite.All user.read mail.read offline_access"
       ]
     }
   ],

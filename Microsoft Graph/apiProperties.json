@@ -7,7 +7,7 @@
           "identityProvider": "oauth2",
           "clientId": "89b4b976-122c-4bb0-a4cd-5563a4a96192",
           "scopes": [
-            "Files.Read Files.ReadWrite user.read mail.read offline_access"
+            "Files.Read Files.Read.All Files.ReadWrite Files.ReadWrite.All user.read mail.read offline_access"
           ],
           "redirectMode": "GlobalPerConnector",
           "redirectUrl": "https://global.consent.azure-apim.net/redirect/microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
@@ -16,15 +16,23 @@
             "IsOnbehalfofLoginSupported": false
           },
           "customParameters": {
-            "authorizationUrl": {
+            "AuthorizationUrl": {
               "value": "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize"
             },
-            "tokenUrl": {
+            "TokenUrl": {
               "value": "https://login.microsoftonline.com/consumers/oauth2/v2.0/token"
             },
-            "refreshUrl": {
+            "RefreshUrl": {
               "value": "https://login.microsoftonline.com/consumers/oauth2/v2.0/token"
             }
+          }
+        },
+        "uiDefinition": {
+          "displayName": "OAuth Connection",
+          "description": "OAuth Connection",
+          "constraints": {
+            "required": "true",
+            "hidden": "false"
           }
         }
       }
