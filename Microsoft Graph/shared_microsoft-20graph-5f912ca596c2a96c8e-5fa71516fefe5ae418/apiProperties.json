@@ -10,20 +10,20 @@
             "Files.Read Files.Read.All Files.ReadWrite Files.ReadWrite.All user.read mail.read offline_access"
           ],
           "redirectMode": "GlobalPerConnector",
-          "redirectUrl": "https://global.consent.azure-apim.net/redirect/microsoft-20graph-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect/microsoft-20graph-5f912ca596c2a96c8e-5fa71516fefe5ae418",
           "properties": {
             "IsFirstParty": "False",
             "IsOnbehalfofLoginSupported": false
           },
           "customParameters": {
             "AuthorizationUrl": {
-              "value": "https://login.microsoftonline.com/27c3dc8c-72b7-4a7b-8707-09b09a18b8cb/oauth2/v2.0/authorize"
+              "value": "https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize"
             },
             "TokenUrl": {
-              "value": "https://login.microsoftonline.com/27c3dc8c-72b7-4a7b-8707-09b09a18b8cb/oauth2/v2.0/token"
+              "value": "https://login.microsoftonline.com/consumers/oauth2/v2.0/token"
             },
             "RefreshUrl": {
-              "value": "https://login.microsoftonline.com/27c3dc8c-72b7-4a7b-8707-09b09a18b8cb/oauth2/v2.0/token"
+              "value": "https://login.microsoftonline.com/consumers/oauth2/v2.0/token"
             }
           }
         },
@@ -39,6 +39,6 @@
     },
     "iconBrandColor": "#ffffff",
     "capabilities": [],
-    "publisher": "Vladislav Kosev"
+    "publisher": "Vladi"
   }
 }

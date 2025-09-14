@@ -922,11 +922,11 @@
     "oauth2-auth": {
       "type": "oauth2",
       "flow": "accessCode",
-      "tokenUrl": "https://login.microsoftonline.com/27c3dc8c-72b7-4a7b-8707-09b09a18b8cb/oauth2/v2.0/token",
+      "tokenUrl": "https://login.windows.net/common/oauth2/authorize",
       "scopes": {
         "Files.Read Files.Read.All Files.ReadWrite Files.ReadWrite.All user.read mail.read offline_access": "Files.Read Files.Read.All Files.ReadWrite Files.ReadWrite.All user.read mail.read offline_access"
       },
-      "authorizationUrl": "https://login.microsoftonline.com/27c3dc8c-72b7-4a7b-8707-09b09a18b8cb/oauth2/v2.0/authorize"
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize"
     }
   },
   "security": [

@@ -1,6 +1,6 @@
 {
-  "connectorId": "shared_custom-20operations-5f225a39949ff7e0b2-5f3b76c9731dcd3ca4",
-  "environment": "Default-21c205cc-335d-4b0f-b444-ff527de57ab6",
+  "connectorId": "shared_custom-20operations-5f912ca596c2a96c8e-5fa71516fefe5ae418",
+  "environment": "Default-27c3dc8c-72b7-4a7b-8707-09b09a18b8cb",
   "apiProperties": "apiProperties.json",
   "apiDefinition": "apiDefinition.swagger.json",
   "icon": "icon.png",
